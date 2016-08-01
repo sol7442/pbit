@@ -11,7 +11,7 @@ abstract public class Server implements Runnable
     abstract public void open(int port) throws IOException;
     
 	public void start(){
-		if(thread != null){
+		if(thread == null){
 			thread = new Thread(this);
 			thread.start();
 		}
