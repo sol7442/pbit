@@ -1,6 +1,9 @@
-package com.pbit.service;
+package com.pbit.server;
 
 import java.io.IOException;
+
+import com.pbit.service.Request;
+import com.pbit.service.Response;
 
 public abstract class Service {
 	public void init(){}

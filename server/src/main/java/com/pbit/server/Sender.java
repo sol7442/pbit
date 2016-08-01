@@ -1,8 +1,9 @@
-package com.pbit.service;
+package com.pbit.server;
 
-public class ServiceSender implements Runnable {
+
+public class Sender implements Runnable {
 	private Service service = null;
-	public ServiceSender(Service service){
+	public Sender(Service service){
 		this.service = service;
 	}
 	public void run() {

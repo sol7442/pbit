@@ -6,12 +6,12 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-import com.pbit.service.Service;
+import com.pbit.server.Service;
 
-public class NioService extends Service {
+abstract public class NioService extends Service {
 
-	private Selector selector;
-	private SelectionKey key;
+	protected Selector selector;
+	protected SelectionKey key;
 	public NioService(Selector selector,SelectionKey key) {
 		this.selector = selector;
 		this.key = key;
@@ -24,17 +24,4 @@ public class NioService extends Service {
 		sc.configureBlocking(false);
 		sc.register(selector, SelectionKey.OP_READ);	
 	}
-
-	@Override
-	public void receive() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void send() {
-		// TODO Auto-generated method stub
-
-	}
-
 }
