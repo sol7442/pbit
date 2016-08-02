@@ -22,10 +22,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.21.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-api-2.6.2.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.21.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-core-2.6.2.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2-api-2.6.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

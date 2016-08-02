@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" name="MyApp">
+<Configuration status="WARN" name="PolicyBasedServer">
   <Appenders>
     <RollingRandomAccessFile name="System" fileName="${sys:PS_LOG}//${sys:PS_INS}_systemLog.log" filePattern="Log/App/app-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>

@@ -3,7 +3,6 @@ package com.pbit;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,9 @@ public class PolicyDeamon {
 			log_config_path = System.getProperty("user.dir");
 			log_config_path += "\\config\\log4j.xml";
 		}
-		System.out.println(log_config_path);
 		System.setProperty(XmlConfigurationFactory.CONFIGURATION_FILE_PROPERTY,log_config_path);
+		System.out.println(XmlConfigurationFactory.CONFIGURATION_FILE_PROPERTY + ":" + log_config_path);
+		
 		syslogger = LoggerFactory.getLogger("system");
 	}
 	private static void printStartHeder() {
