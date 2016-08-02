@@ -13,6 +13,6 @@ public class ByteBufferPool extends ObjectPool<ByteBuffer> {
 
 	@Override
 	public ByteBuffer create() {
-		return null;
+		return ByteBuffer.allocateDirect(1024);
 	}
 }
