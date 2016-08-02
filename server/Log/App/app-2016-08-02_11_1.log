@@ -1,0 +1,11 @@
+2016-08-02 10:21:15,832 INFO system [main] ======================================================
+2016-08-02 10:21:15,832 INFO system [main] STAR_TIME : Tue Aug 02 10:21:15 KST 2016
+2016-08-02 10:21:15,832 INFO system [main] INS_NAME  : PS1
+2016-08-02 10:21:15,832 INFO system [main] LOG_PATH  : D:\dev\logs\pbit
+2016-08-02 10:21:15,832 INFO system [main] ======================================================
+2016-08-02 10:48:38,020 INFO system [main] ======================================================
+2016-08-02 10:48:38,020 INFO system [main] STAR_TIME : Tue Aug 02 10:48:38 KST 2016
+2016-08-02 10:48:38,020 INFO system [main] INS_NAME  : PS1
+2016-08-02 10:48:38,020 INFO system [main] LOG_PATH  : D:\dev\logs\pbit
+2016-08-02 10:48:38,020 INFO system [main] ======================================================
+2016-08-02 10:48:38,051 INFO system [main] Server Open : sun.nio.ch.ServerSocketChannelImpl[/127.0.0.1:5000]

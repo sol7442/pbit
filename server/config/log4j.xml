@@ -11,11 +11,30 @@
         </Policies>
         <DefaultRolloverStrategy max="500"/>
     </RollingRandomAccessFile>
+    <RollingRandomAccessFile name="Process" fileName="${sys:PS_LOG}//${sys:PS_INS}_processLog.log" filePattern="Log/App/app-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+        <PatternLayout>
+            <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+        </PatternLayout>
+        <Policies>
+            <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+            <SizeBasedTriggeringPolicy size="4 MB"/>
+        </Policies>
+        <DefaultRolloverStrategy max="500"/>
+    </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="Service" fileName="${sys:PS_LOG}//${sys:PS_INS}_serviceLog.log" filePattern="Log/App/app-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+        <PatternLayout>
+            <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+        </PatternLayout>
+        <Policies>
+            <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+            <SizeBasedTriggeringPolicy size="4 MB"/>
+        </Policies>
+        <DefaultRolloverStrategy max="500"/>
+    </RollingRandomAccessFile>
     <RollingRandomAccessFile name="Exception" fileName="${sys:PS_LOG}//${sys:PS_INS}_errorLog.log" filePattern="Log/Exception/exception-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
             <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
         </PatternLayout>
-
         <Policies>
             <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
             <SizeBasedTriggeringPolicy size="4 MB"/>
@@ -26,7 +45,12 @@
     <Async name="System_Log" includeLocation="true">
         <AppenderRef ref="System" />
     </Async>
-
+    <Async name="Process_Log" includeLocation="true">
+        <AppenderRef ref="Process" />
+    </Async>
+    <Async name="Service_Log" includeLocation="true">
+        <AppenderRef ref="Service" />
+    </Async>
     <Async name="Exception_Log" includeLocation="true">
         <AppenderRef ref="Exception" />
     </Async>
@@ -36,6 +60,12 @@
   <Loggers>
     <Logger name="system" level="info" additivity="false">
         <AppenderRef ref="System_Log"/>
+    </Logger>
+    <Logger name="process" level="debug" additivity="false">
+        <AppenderRef ref="Process_Log"/>
+    </Logger>
+    <Logger name="service" level="info" additivity="false">
+        <AppenderRef ref="Service_Log"/>
     </Logger>
     <Root level="error">
       <AppenderRef ref="Exception_Log"/>
