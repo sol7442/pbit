@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pbit.server.Service;
 
-abstract public class NioService extends Service {
+abstract public class NioService extends Service <SelectionKey>{
 
 	protected Selector selector;
 	protected SelectionKey key;
@@ -31,5 +31,22 @@ abstract public class NioService extends Service {
 		sc.register(selector, SelectionKey.OP_READ);
 		
 		proclog.debug("accecpt : {}",sc.socket());
+	}
+	
+
+	@Override
+	public void receive() {
+		ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
+		
+	}
+
+	@Override
+	public void send() {
+		
+	}
+
+	@Override
+	public SelectionKey getKey() {
+		return this.key;
 	}
 }

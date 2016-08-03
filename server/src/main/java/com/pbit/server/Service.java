@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.pbit.service.Request;
 import com.pbit.service.Response;
 
-public abstract class Service {
+public abstract class Service<T> {
 	public void init(){}
 	public void service(Request request, Response response){
 		
@@ -13,4 +13,5 @@ public abstract class Service {
 	abstract public void accept() throws IOException;
 	abstract public void receive();
 	abstract public void send();
+	abstract public T getKey();
 }

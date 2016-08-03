@@ -16,6 +16,7 @@ import com.pbit.server.Server;
 import com.pbit.server.Service;
 import com.pbit.server.Receiver;
 import com.pbit.server.Sender;
+import com.pbit.service.ServiceRegistry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,14 @@ abstract public class NioServer extends Server {
 	private Selector selector;
 
 	private ExecutorService executor = null;
-	private HashMap<SelectionKey,Service> services = new HashMap<SelectionKey, Service>();
+	private ServiceRegistry<SelectionKey> services = NioServiceRegistry.getInstance();
 	
 	private Logger syslog  = LoggerFactory.getLogger("system");
 	private Logger proclog = LoggerFactory.getLogger("process");
-	private Logger errlog  = LoggerFactory.getLogger("error"); 
+	private Logger errlog  = LoggerFactory.getLogger("error");
+	
+	
+	
 	public void run() {
 		try {
 			while (true) {
@@ -65,19 +69,17 @@ abstract public class NioServer extends Server {
 	}
 
 	private void write(SelectionKey key) {
-		Service service = services.get(key);
-		executor.execute(new Receiver(service));
+		executor.execute(new Sender<SelectionKey>(services.get(key)));
 	}
 
 	private void read(SelectionKey key) {
-		Service service = services.get(key);
-		executor.execute(new Sender(service));
+		executor.execute(new Receiver<SelectionKey>(services.get(key)));
 	}
 
 	private void accept(SelectionKey key) throws IOException {		
-		Service service = newService(selector,key);
+		Service<SelectionKey> service = newService(selector,key);
 		service.accept();
-		services.put(key, service);
+		services.put(service);
 	}
 
 	@Override
@@ -92,5 +94,5 @@ abstract public class NioServer extends Server {
 
 		syslog.info("Server Open : {}",serverchannel.toString());
 	}
-	abstract public Service newService(Selector selector, SelectionKey key);
+	abstract public Service<SelectionKey> newService(Selector selector, SelectionKey key);
 }

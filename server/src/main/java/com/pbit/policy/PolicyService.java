@@ -10,13 +10,4 @@ public class PolicyService extends NioService {
 		super(selector, key);
 	}
 
-	@Override
-	public void receive() {
-		
-	}
-
-	@Override
-	public void send() {
-		
-	}
 }

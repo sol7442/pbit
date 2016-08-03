@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pbit.policy.PolicyServer;
+import com.pbit.server.Server;
 
 public class PolicyDeamon {
 
@@ -17,21 +18,23 @@ public class PolicyDeamon {
 	private static Logger syslogger = null;
 	public static void main(String[] args) {
 		setLoggerConfigure(args[0]);
-		
 		loadServerConfigure();
 		printStartHeder();
-		PolicyServer server = new PolicyServer();
+		
+		
+		Server policy_server = new PolicyServer();
 		try {
-			server.open(5000);
-			server.start();
+			policy_server.open(5000);
+			policy_server.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
 	private static void loadServerConfigure() {
 		
 	}
+	
+	
 	private static void setLoggerConfigure(String log_config_path){
 		if(log_config_path == null){
 			log_config_path = System.getProperty("user.dir");

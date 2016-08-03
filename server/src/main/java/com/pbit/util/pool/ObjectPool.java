@@ -1,26 +1,27 @@
 package com.pbit.util.pool;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class ObjectPool<T> {
-	private BlockingQueue<T> queue = null;
+	private LinkedList<T> list = null; 
 	private ReentrantLock lock = new ReentrantLock();
-	private int size = 10;
+	private int pool_size = 10;
 	
-	public ObjectPool(int size){
-		this.queue = new ArrayBlockingQueue<T>(size);
-		this.size = size;
+	public ObjectPool(){
+		this.list = new LinkedList<T>();
+	}
+	public void setSize(int pool_size){
+		this.pool_size = pool_size;
 	}
 	public void offer(T object) {
 		lock.lock();
 		try{
-			this.queue.offer(object);
+			if(this.list.size() < this.pool_size){
+				this.list.offer(object);
+			}else{
+				destroy(object);
+			}
 		}finally{
 			lock.unlock();
 		}
@@ -28,7 +29,7 @@ public abstract class ObjectPool<T> {
 	public T poll() {
 		lock.lock();
 		try{
-			T object = this.queue.peek();
+			T object = this.list.poll();
 			if(object == null){
 				object = create();
 			}
@@ -40,13 +41,17 @@ public abstract class ObjectPool<T> {
 	public void clear(){
 		lock.lock();
 		try{
-			this.queue.clear();
+			for(T object : this.list){
+				destroy(object);
+			}
+			this.list.clear();
 		}finally{
 			lock.unlock();
 		}
 	}
 	public int size(){
-		return this.queue.size();
+		return this.list.size();
 	}
 	public abstract T create();
+	public abstract void destroy(T object);
 }
