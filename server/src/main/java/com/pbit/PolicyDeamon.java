@@ -1,6 +1,7 @@
 package com.pbit;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pbit.policy.PolicyServer;
 import com.pbit.server.Server;
+import com.pbit.server.util.ByteBufferPool;
 
 public class PolicyDeamon {
 
@@ -24,6 +26,9 @@ public class PolicyDeamon {
 		
 		Server policy_server = new PolicyServer();
 		try {
+			ByteBufferPool buffer_pool = new ByteBufferPool();
+			buffer_pool.initialize(10240,100);
+			
 			policy_server.open(5000);
 			policy_server.start();
 		} catch (IOException e) {
