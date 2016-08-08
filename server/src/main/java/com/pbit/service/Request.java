@@ -1,5 +1,7 @@
 package com.pbit.service;
 
-public class Request {
+import java.io.InputStream;
 
+public class Request {
+	protected InputStream input;
 }

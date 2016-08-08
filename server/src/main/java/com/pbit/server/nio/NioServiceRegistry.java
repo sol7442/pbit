@@ -1,16 +1,17 @@
 package com.pbit.server.nio;
 
 import java.nio.channels.SelectionKey;
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 
 import com.pbit.server.Service;
 import com.pbit.service.ServiceRegistry;
 
-public class NioServiceRegistry extends ServiceRegistry<SelectionKey>{
+public class NioServiceRegistry extends ServiceRegistry{
 
 	private static NioServiceRegistry instance = null;
 	
-	private HashMap<SelectionKey,Service<SelectionKey>> services = new HashMap<SelectionKey, Service<SelectionKey>>();
+	private HashMap<String,Service> services = new HashMap<String, Service>();
 	
 	public static NioServiceRegistry getInstance(){
 		if(instance == null){
@@ -20,12 +21,17 @@ public class NioServiceRegistry extends ServiceRegistry<SelectionKey>{
 	}
 	
 	@Override
-	public void put(Service<SelectionKey> service) {
+	public void put(Service service) {
 		services.put(service.getKey(), service);
 	}
 
 	@Override
-	public Service<SelectionKey> get(SelectionKey key) {
+	public Service get(String key) {
 		return services.get(key);
+	}
+
+	@Override
+	public void remove(String key) {
+		services.remove(key);
 	}
 }

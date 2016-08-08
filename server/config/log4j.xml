@@ -11,7 +11,7 @@
         </Policies>
         <DefaultRolloverStrategy max="500"/>
     </RollingRandomAccessFile>
-    <RollingRandomAccessFile name="Process" fileName="${sys:PS_LOG}//${sys:PS_INS}_processLog.log" filePattern="Log/App/app-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+    <RollingRandomAccessFile name="Process" fileName="${sys:PS_LOG}//${sys:PS_INS}_processLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_process-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
             <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
         </PatternLayout>
@@ -21,7 +21,7 @@
         </Policies>
         <DefaultRolloverStrategy max="500"/>
     </RollingRandomAccessFile>
-        <RollingRandomAccessFile name="Service" fileName="${sys:PS_LOG}//${sys:PS_INS}_serviceLog.log" filePattern="Log/App/app-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+        <RollingRandomAccessFile name="Service" fileName="${sys:PS_LOG}//${sys:PS_INS}_serviceLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_system-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
             <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
         </PatternLayout>
@@ -31,7 +31,7 @@
         </Policies>
         <DefaultRolloverStrategy max="500"/>
     </RollingRandomAccessFile>
-    <RollingRandomAccessFile name="Exception" fileName="${sys:PS_LOG}//${sys:PS_INS}_errorLog.log" filePattern="Log/Exception/exception-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+    <RollingRandomAccessFile name="Exception" fileName="${sys:PS_LOG}//${sys:PS_INS}_errorLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_exception-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
             <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
         </PatternLayout>

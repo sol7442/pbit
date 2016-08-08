@@ -9,7 +9,7 @@ import com.pbit.server.nio.NioServer;
 public class PolicyServer extends NioServer {
 
 	@Override
-	public Service<SelectionKey> newService(Selector selector, SelectionKey key) {
+	public Service newService(Selector selector, SelectionKey key) {
 		return new PolicyService(selector, key);
 	}
 

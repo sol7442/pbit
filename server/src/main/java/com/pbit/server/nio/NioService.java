@@ -1,6 +1,5 @@
 package com.pbit.server.nio;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -16,13 +15,23 @@ import org.slf4j.LoggerFactory;
 import com.pbit.server.ServerException;
 import com.pbit.server.Service;
 import com.pbit.server.util.ByteBufferPool;
+import com.pbit.service.Request;
+import com.pbit.service.Response;
+import com.pbit.service.ServiceRegistry;
 
-abstract public class NioService extends Service <SelectionKey>{
+abstract public class NioService extends Service{
 
 	protected Selector selector;
 	protected SelectionKey key;
+	protected String serviceKey;
 	
 	protected Logger proclog = LoggerFactory.getLogger("process");
+	protected Logger syslog = LoggerFactory.getLogger("system");
+	
+	private ServiceRegistry services = NioServiceRegistry.getInstance();
+	
+	private ServerSocketChannel ssc = null;
+	private SocketChannel sc = null;
 	
 	public NioService(Selector selector,SelectionKey key) {
 		this.selector = selector;
@@ -30,13 +39,17 @@ abstract public class NioService extends Service <SelectionKey>{
 	}
 
 	@Override
-	public void accept() throws IOException {
-		ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
-		SocketChannel sc = ssc.accept();
+	public String accept() throws IOException {
+		this.ssc = (ServerSocketChannel) key.channel();
+		this.sc = ssc.accept();
 		sc.configureBlocking(false);
 		sc.register(selector, SelectionKey.OP_READ);
 		
-		proclog.debug("accecpt : {}",sc.socket());
+		serviceKey = sc.socket().toString();
+		proclog.debug("accecpt : {}",serviceKey);
+		
+		return serviceKey;
+		
 	}
 	
 
@@ -45,30 +58,64 @@ abstract public class NioService extends Service <SelectionKey>{
 		try {
 			ByteBufferPool buffer_pool = ByteBufferPool.getInstance();
 			List<ByteBuffer> buffer_list = new ArrayList<ByteBuffer>();
+			Request request 	= null;
+			Response response 	= null;
+			
 			try{
-				SocketChannel sc = (SocketChannel)key.channel();
 				int readlen = 0;
 				while(true){
 					ByteBuffer buffer = buffer_pool.poll();
 					buffer_list.add(buffer);
-					readlen = sc.read(buffer);
+					readlen = this.sc.read(buffer);
 					if(readlen <=0){
 						break;
 					}
 				}
 				
 				if(readlen == -1){
-					close();
+					closeClinet();
 				}
 				
+				
+				//buffer_list
+				//request;				
+				//response;
+				
+				request  = newRequest(buffer_list);
+				response = newResponse(request);
+				service(request, response);
+				
 			}catch (IOException e) {
-				e.printStackTrace();
+				syslog.error("{}",e);
 			}finally{
-				for(ByteBuffer buffer : buffer_list )
-				buffer_pool.offer(buffer);
+				for(ByteBuffer buffer : buffer_list ){
+					buffer_pool.offer(buffer);
+				}
 			}
 		} catch (ServerException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public abstract Response newResponse(Request request) ;
+
+	public abstract Request newRequest(List<ByteBuffer> buffer_list);
+	
+	private void closeClinet() {
+		try {
+			
+			String serviceKey = this.sc.socket().toString();
+			
+			key.channel().close();
+			key.cancel();
+
+			services.remove(serviceKey);
+			proclog.debug("close client : {}", serviceKey);
+			
+			
+
+		} catch (IOException e) {
+			syslog.error("{}",e);
 		}
 	}
 
@@ -78,7 +125,7 @@ abstract public class NioService extends Service <SelectionKey>{
 	}
 
 	@Override
-	public SelectionKey getKey() {
-		return this.key;
+	public String getKey() {
+		return this.serviceKey;
 	}
 }
