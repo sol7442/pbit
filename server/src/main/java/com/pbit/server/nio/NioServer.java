@@ -104,6 +104,8 @@ abstract public class NioServer extends Server {
 				
 				if(readlen == -1){
 					System.out.println("close 0000");
+					key.channel().close();
+					key.cancel();
 				}else{
 					//key.interestOps(SelectionKey.OP_WRITE) ;
 				}
