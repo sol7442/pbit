@@ -71,19 +71,13 @@ abstract public class NioService extends Service{
 						break;
 					}
 				}
-				
 				if(readlen == -1){
 					closeClinet();
+				}else{
+					request  = newRequest(buffer_list);
+					response = newResponse(request);
+					service(request, response);
 				}
-				
-				
-				//buffer_list
-				//request;				
-				//response;
-				
-				request  = newRequest(buffer_list);
-				response = newResponse(request);
-				service(request, response);
 				
 			}catch (IOException e) {
 				syslog.error("{}",e);
@@ -111,8 +105,6 @@ abstract public class NioService extends Service{
 
 			services.remove(serviceKey);
 			proclog.debug("close client : {}", serviceKey);
-			
-			
 
 		} catch (IOException e) {
 			syslog.error("{}",e);

@@ -53,13 +53,6 @@ abstract public class NioServer extends Server {
 					
 					proclog.debug("[{}]:[{}]",key.channel(),key.interestOps());
 					
-					System.out.println(key.readyOps());
-					System.out.println(key.isConnectable());
-					System.out.println(key.isValid());
-					System.out.println(key.isAcceptable());
-					System.out.println(key.isReadable());
-					System.out.println(key.isWritable());
-					
 					if (key.isAcceptable()) {
 						accept(key);
 					} else if (key.isReadable()) {
@@ -76,59 +69,18 @@ abstract public class NioServer extends Server {
 	}
 
 	private void write(SelectionKey key) {
-		key.interestOps(SelectionKey.OP_READ) ;
-		
-		//SocketChannel sc = (SocketChannel)key.channel();
-		//executor.execute(new Sender(services.get(sc.socket().toString())));
+		SocketChannel sc = (SocketChannel)key.channel();
+		executor.execute(new Sender(services.get(sc.socket().toString())));
 	}
 
 	private void read(SelectionKey key) {
 		SocketChannel sc = (SocketChannel)key.channel();
-		
-		try {
-			ByteBufferPool buffer_pool = ByteBufferPool.getInstance();
-			List<ByteBuffer> buffer_list = new ArrayList<ByteBuffer>();
-			Request request 	= null;
-			Response response 	= null;
-			
-			try{
-				int readlen = 0;
-				while(true){
-					ByteBuffer buffer = ByteBuffer.allocate(1024);//buffer_pool.poll();
-					readlen = sc.read(buffer);
-					if(readlen <=0){
-						break;
-					}
-					buffer_list.add(buffer);
-				}
-				
-				if(readlen == -1){
-					System.out.println("close 0000");
-					key.channel().close();
-					key.cancel();
-				}else{
-					//key.interestOps(SelectionKey.OP_WRITE) ;
-				}
-				
-			}catch (IOException e) {
-				syslog.error("{}",e);
-			}finally{
-//				for(ByteBuffer buffer : buffer_list ){
-//					buffer_pool.offer(buffer);
-//				}
-			}
-		} catch (ServerException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
+		executor.execute(new Receiver(services.get(sc.socket().toString())));
 	}
 
 	private void accept(SelectionKey key) throws IOException {		
 		Service service = newService(selector,key);
 		service.accept();
-		
 		services.put(service);
 	}
 

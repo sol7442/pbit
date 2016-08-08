@@ -27,7 +27,7 @@ public class PolicyDeamon {
 		Server policy_server = new PolicyServer();
 		try {
 			ByteBufferPool buffer_pool = new ByteBufferPool();
-			buffer_pool.initialize(10240,100);
+			buffer_pool.initialize(1024,100);
 			
 			policy_server.open(5000);
 			policy_server.start();

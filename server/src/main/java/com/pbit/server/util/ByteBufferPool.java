@@ -18,10 +18,9 @@ public class ByteBufferPool extends ObjectPool<ByteBuffer> {
 		return instance;
 	}
 	public void initialize(int bsize, int psize){
-		setSize(psize);
-
-		this.buffer_size = bsize;
 		instance = new ByteBufferPool();
+		instance.setSize(psize);
+		instance.buffer_size = bsize;
 	}
 	public ByteBufferPool(){}
 	
