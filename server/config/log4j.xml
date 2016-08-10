@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" name="PolicyBasedServer">
+<Configuration status="DEBUG" name="PolicyBasedServer">
   <Appenders>
-    <RollingRandomAccessFile name="System" fileName="${sys:PS_LOG}//${sys:PS_INS}_systemLog.log" filePattern="Log/App/app-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+    <RollingRandomAccessFile name="System" fileName="${sys:PS_LOG}//${sys:PS_INS}_systemLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_system-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
             <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
         </PatternLayout>
@@ -21,7 +21,7 @@
         </Policies>
         <DefaultRolloverStrategy max="500"/>
     </RollingRandomAccessFile>
-        <RollingRandomAccessFile name="Service" fileName="${sys:PS_LOG}//${sys:PS_INS}_serviceLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_system-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
+        <RollingRandomAccessFile name="Service" fileName="${sys:PS_LOG}//${sys:PS_INS}_serviceLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_service-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
             <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
         </PatternLayout>
