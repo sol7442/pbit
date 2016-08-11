@@ -29,7 +29,7 @@ import com.pbit.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class NioServer extends Server {
+abstract public class NioServerBack extends Server {
 
 	private ServerSocketChannel serverchannel;
 	private Selector selector;
@@ -41,31 +41,6 @@ abstract public class NioServer extends Server {
 	private Logger errlog  = LoggerFactory.getLogger("error");
 	
 	private Map<String,SocketChannel> SocketChannelMap = new HashMap<String, SocketChannel>(); 
-	
-	protected final int _SelectorPoolSize;
-	public NioServer(int selector_pool_size){
-		_SelectorPoolSize = selector_pool_size;
-	}
-	@Override
-	public void open(int port) throws IOException {
-		serverchannel = ServerSocketChannel.open();
-		serverchannel.socket().setReuseAddress(true);
-		serverchannel.socket().bind(new InetSocketAddress(port));
-		serverchannel.configureBlocking(false);
-
-		selector = Selector.open();
-		serverchannel.register(selector, SelectionKey.OP_ACCEPT);
-		executor = Executors.newCachedThreadPool();
-		
-		syslog.info("Server Open : {}",serverchannel.toString());
-		
-		/*
-		http://jeewanthad.blogspot.kr/2013/03/reacter-pattern-explained-part-2.html
-		http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf
-		https://jfarcand.wordpress.com/2006/07/19/httpweblogs-java-netblog20060719tricks-and-tips-nio-part-iv-meet-selectors/
-		*/
-	}
-	
 	
 	public void run() {
 		try {
@@ -149,6 +124,17 @@ abstract public class NioServer extends Server {
 	
 	public void receive() {
 	}
+	@Override
+	public void open(int port) throws IOException {
+		serverchannel = ServerSocketChannel.open();
+		serverchannel.configureBlocking(false);
+		serverchannel.socket().bind(new InetSocketAddress("localhost", port));
 
+		selector = Selector.open();
+		serverchannel.register(selector, SelectionKey.OP_ACCEPT);
+		executor = Executors.newCachedThreadPool();
+		
+		syslog.info("Server Open : {}",serverchannel.toString());
+	}
 	abstract public Service newService(Selector selector, SelectionKey key);
 }

@@ -24,13 +24,14 @@ public class PolicyDeamon {
 		printStartHeder();
 		
 		
-		Server policy_server = new PolicyServer();
+		Server policy_server = new PolicyServer(3);
 		try {
-			ByteBufferPool buffer_pool = new ByteBufferPool();
-			buffer_pool.initialize(1024,100);
-			
 			policy_server.open(5000);
 			policy_server.start();
+			
+			
+			ByteBufferPool buffer_pool = new ByteBufferPool();
+			buffer_pool.initialize(1024,100);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
