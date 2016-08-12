@@ -19,7 +19,6 @@ import java.util.concurrent.Executors;
 import com.pbit.server.Server;
 import com.pbit.server.ServerException;
 import com.pbit.server.Service;
-import com.pbit.server.Connection;
 import com.pbit.server.Receiver;
 import com.pbit.server.Sender;
 import com.pbit.server.util.ByteBufferPool;
@@ -30,7 +29,7 @@ import com.pbit.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract public class NioServer extends Server {
+abstract public class NioServerBack extends Server {
 
 	private ServerSocketChannel serverchannel;
 	private Selector selector;
@@ -41,32 +40,7 @@ abstract public class NioServer extends Server {
 	private Logger proclog = LoggerFactory.getLogger("process");
 	private Logger errlog  = LoggerFactory.getLogger("error");
 	
-	private Map<String,Connection> connectionMap = new HashMap<String, Connection>(); 
-	
-	protected final int _SelectorPoolSize;
-	public NioServer(int selector_pool_size){
-		_SelectorPoolSize = selector_pool_size;
-	}
-	@Override
-	public void open(int port) throws IOException {
-		serverchannel = ServerSocketChannel.open();
-		serverchannel.socket().setReuseAddress(true);
-		serverchannel.socket().bind(new InetSocketAddress(port));
-		serverchannel.configureBlocking(false);
-
-		selector = Selector.open();
-		serverchannel.register(selector, SelectionKey.OP_ACCEPT);
-		executor = Executors.newCachedThreadPool();
-		
-		syslog.info("Server Open : {}",serverchannel.toString());
-		
-		/*
-		http://jeewanthad.blogspot.kr/2013/03/reacter-pattern-explained-part-2.html
-		http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf
-		https://jfarcand.wordpress.com/2006/07/19/httpweblogs-java-netblog20060719tricks-and-tips-nio-part-iv-meet-selectors/
-		*/
-	}
-	
+	private Map<String,SocketChannel> SocketChannelMap = new HashMap<String, SocketChannel>(); 
 	
 	public void run() {
 		try {
@@ -112,19 +86,17 @@ abstract public class NioServer extends Server {
 				while(true){
 					ByteBuffer buffer = buffer_pool.poll();
 					buffer_list.add(buffer);
-					readlen = sc.read(buffer);
+					readlen = this.sc.read(buffer);
 					if(readlen <=0){
 						break;
 					}
 				}
 				if(readlen == -1){
-					closeConnection(key);
+					closeClinet();
 				}else{
-					
-					Connection connection = connectionMap.get(sc.socket().toString());
 					request  = newRequest(buffer_list);
 					response = newResponse(request);
-					executor.execute(newService(connection,request,response));
+					service(request, response);
 				}
 				
 			}catch (IOException e) {
@@ -139,14 +111,6 @@ abstract public class NioServer extends Server {
 		}
 	}
 
-	public abstract Runnable newService(Connection connection, Request request, Response response);
-	public abstract Response newResponse(Request request);
-	public abstract Request newRequest(List<ByteBuffer> buffer_list);
-	private void closeConnection(SelectionKey key) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	private void accept(SelectionKey key) throws IOException {		
 		ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
 		SocketChannel sc = ssc.accept();
@@ -154,12 +118,23 @@ abstract public class NioServer extends Server {
 		sc.register(selector, SelectionKey.OP_READ);
 
 		proclog.debug("accecpt : {}",sc.socket().toString());
-		connectionMap.put(sc.socket().toString(), new NioConnection(sc));
+		SocketChannelMap.put(sc.socket().toString(), sc);
 	}
 
 	
 	public void receive() {
 	}
+	@Override
+	public void open(int port) throws IOException {
+		serverchannel = ServerSocketChannel.open();
+		serverchannel.configureBlocking(false);
+		serverchannel.socket().bind(new InetSocketAddress("localhost", port));
 
+		selector = Selector.open();
+		serverchannel.register(selector, SelectionKey.OP_ACCEPT);
+		executor = Executors.newCachedThreadPool();
+		
+		syslog.info("Server Open : {}",serverchannel.toString());
+	}
 	abstract public Service newService(Selector selector, SelectionKey key);
 }
