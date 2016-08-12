@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import com.pbit.server.Server;
 import com.pbit.server.ServerException;
 import com.pbit.server.Service;
+import com.pbit.server.Connection;
 import com.pbit.server.Receiver;
 import com.pbit.server.Sender;
 import com.pbit.server.util.ByteBufferPool;
@@ -40,7 +41,7 @@ abstract public class NioServer extends Server {
 	private Logger proclog = LoggerFactory.getLogger("process");
 	private Logger errlog  = LoggerFactory.getLogger("error");
 	
-	private Map<String,SocketChannel> SocketChannelMap = new HashMap<String, SocketChannel>(); 
+	private Map<String,Connection> connectionMap = new HashMap<String, Connection>(); 
 	
 	public void run() {
 		try {
@@ -86,17 +87,19 @@ abstract public class NioServer extends Server {
 				while(true){
 					ByteBuffer buffer = buffer_pool.poll();
 					buffer_list.add(buffer);
-					readlen = this.sc.read(buffer);
+					readlen = sc.read(buffer);
 					if(readlen <=0){
 						break;
 					}
 				}
 				if(readlen == -1){
-					closeClinet();
+					closeConnection(key);
 				}else{
+					
+					Connection connection = connectionMap.get(sc.socket().toString());
 					request  = newRequest(buffer_list);
 					response = newResponse(request);
-					service(request, response);
+					executor.execute(newService(connection,request,response));
 				}
 				
 			}catch (IOException e) {
@@ -111,6 +114,14 @@ abstract public class NioServer extends Server {
 		}
 	}
 
+	public abstract Runnable newService(Connection connection, Request request, Response response);
+	public abstract Response newResponse(Request request);
+	public abstract Request newRequest(List<ByteBuffer> buffer_list);
+	private void closeConnection(SelectionKey key) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void accept(SelectionKey key) throws IOException {		
 		ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
 		SocketChannel sc = ssc.accept();
@@ -118,7 +129,7 @@ abstract public class NioServer extends Server {
 		sc.register(selector, SelectionKey.OP_READ);
 
 		proclog.debug("accecpt : {}",sc.socket().toString());
-		SocketChannelMap.put(sc.socket().toString(), sc);
+		connectionMap.put(sc.socket().toString(), new NioConnection(sc));
 	}
 
 	
