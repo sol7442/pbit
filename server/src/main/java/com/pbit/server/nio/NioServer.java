@@ -2,6 +2,7 @@ package com.pbit.server.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -10,6 +11,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.pbit.server.Server;
+import com.pbit.service.Request;
+import com.pbit.service.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +24,7 @@ http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf
 https://jfarcand.wordpress.com/2006/07/19/httpweblogs-java-netblog20060719tricks-and-tips-nio-part-iv-meet-selectors/
 */
 
-abstract public class NioServer extends Server {
+abstract public class NioServer extends Server implements IServiceListener {
 
 	
 	
@@ -30,7 +33,7 @@ abstract public class NioServer extends Server {
 	protected Logger errlog  = LoggerFactory.getLogger("error");
 	
 	
-	protected int _SelectorSize = 3;
+	protected int _SelectorSize = 1;
 	
 	private ServerSocketChannel _ServerChannel;
 	private Selector _AcceptSelector;
@@ -81,7 +84,7 @@ abstract public class NioServer extends Server {
             try {
                 SocketChannel channel = _ServerChannel.accept();
                 if (channel != null){
-                    new ReadWriteSelectHandler(_Selectors[_CurSel++], channel);
+                    new ReadWriteHandler((IServiceListener) this, _Selectors[_CurSel++], channel);
                     if(_CurSel == _SelectorSize){
                     	_CurSel = 0;
                     }
@@ -92,5 +95,33 @@ abstract public class NioServer extends Server {
             }
 		}
 	}
+	
+	public void requestArrived(ReadWriteHandler handler, ByteBuffer buffer) {
+		_WorkPool.execute(new Worker(handler,buffer));
+	}
+	
+	private class Worker implements Runnable{
+		private ReadWriteHandler handler;
+		private ByteBuffer buffer;
+		public Worker(ReadWriteHandler handler, ByteBuffer buffer){
+			this.handler = handler;
+			this.buffer  = buffer;
+			
+		}
+		public void run() {
+			
+			try{
+				Request request = newRequest(buffer);//Request/Response;
+				Response response = newResponse(request);
+				service(request,response);
+			}catch(Exception e){
+				
+			}
+			
+			handler.watkeup(ReadWriteHandler.ON_WRITE);
+		}
+	}
+	
+	public abstract void service(Request request,Response response);
 }
 	
