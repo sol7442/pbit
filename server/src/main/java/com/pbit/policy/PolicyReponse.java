@@ -5,7 +5,13 @@ import com.pbit.service.Response;
 
 public class PolicyReponse extends Response {
 
-	public PolicyReponse(Request request) {
+	public PolicyReponse() {
 		
+	}
+	
+	public String toString(){
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("PolicyReponse+++");
+		return buffer.toString();
 	}
 }

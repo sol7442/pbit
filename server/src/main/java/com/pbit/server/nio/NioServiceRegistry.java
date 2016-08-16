@@ -4,7 +4,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 
-import com.pbit.server.Service;
+import com.pbit.service.Service;
 import com.pbit.service.ServiceRegistry;
 
 public class NioServiceRegistry extends ServiceRegistry{
@@ -22,7 +22,7 @@ public class NioServiceRegistry extends ServiceRegistry{
 	
 	@Override
 	public void put(Service service) {
-		services.put(service.getKey(), service);
+		//services.put(service.getKey(), service);
 	}
 
 	@Override

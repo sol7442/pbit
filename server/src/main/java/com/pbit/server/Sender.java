@@ -1,5 +1,7 @@
 package com.pbit.server;
 
+import com.pbit.service.Service;
+
 
 public class Sender implements Runnable {
 	private Service service = null;
@@ -7,6 +9,6 @@ public class Sender implements Runnable {
 		this.service = service;
 	}
 	public void run() {
-		service.send();
+	//	service.send();
 	}
 }

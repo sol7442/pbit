@@ -11,8 +11,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.pbit.server.Server;
+import com.pbit.server.util.ByteBufferPool;
 import com.pbit.service.Request;
 import com.pbit.service.Response;
+import com.pbit.service.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,7 @@ abstract public class NioServer extends Server implements IServiceListener {
 	private ServerSocketChannel _ServerChannel;
 	private Selector _AcceptSelector;
 	private int _CurSel = 0;
-	private Selector[] _Selectors;
+	private SlaveSelector[] _Selectors;
 	public NioServer(){	}
 	@Override
 	public void open(int port) throws IOException {
@@ -49,11 +51,12 @@ abstract public class NioServer extends Server implements IServiceListener {
 
 		_AcceptSelector = Selector.open();
 		SelectionKey sk = _ServerChannel.register(_AcceptSelector, SelectionKey.OP_ACCEPT);
-		sk.attach(new Acceptor());
+		sk.attach(new Acceptor(this));
 		
-		_Selectors = new Selector[_SelectorSize];
+		_Selectors = new SlaveSelector[_SelectorSize];
 		for(int i=0;i<_SelectorSize;i++){
-			_Selectors[i] = Selector.open();
+			_Selectors[i] = new SlaveSelector();
+			_Selectors[i].start();
 		}
 		
 		syslog.info("Server Open : {}",_ServerChannel.toString());
@@ -80,14 +83,22 @@ abstract public class NioServer extends Server implements IServiceListener {
             r.run();
 	}
 	private class Acceptor implements Runnable {
+		IServiceListener _Listener;
+		public Acceptor(IServiceListener listener) {
+			_Listener = listener;
+		}
+
 		public void run() {
             try {
                 SocketChannel channel = _ServerChannel.accept();
                 if (channel != null){
-                    new ReadWriteHandler((IServiceListener) this, _Selectors[_CurSel++], channel);
+                	ReadWriteHandler handler = new ReadWriteHandler(_Listener);
+                	_Selectors[_CurSel++].addCannel(channel,handler);
+                	
                     if(_CurSel == _SelectorSize){
                     	_CurSel = 0;
                     }
+                    proclog.debug("new Connection Accept : ({}){}",_CurSel,channel.toString());
                 }
             }
             catch (IOException ex) {
@@ -111,17 +122,24 @@ abstract public class NioServer extends Server implements IServiceListener {
 		public void run() {
 			
 			try{
-				Request request = newRequest(buffer);//Request/Response;
-				Response response = newResponse(request);
-				service(request,response);
-			}catch(Exception e){
+				Request request = createRequest(buffer);
+				Response response = createResponse(request);
+				ByteBufferPool.getInstance().offer(buffer);
 				
+				Service  service = newService();
+				service.service(request, response);
+				
+				handler.result("result");
+			}catch(Exception e){
+				handler.result("Error");
 			}
 			
-			handler.watkeup(ReadWriteHandler.ON_WRITE);
+			handler.wakeup(ReadWriteHandler.ON_WRITE);
 		}
 	}
 	
-	public abstract void service(Request request,Response response);
+	public abstract Service newService();
+	public abstract Request createRequest(ByteBuffer buffer);
+	public abstract Response createResponse(Request request);
 }
 	

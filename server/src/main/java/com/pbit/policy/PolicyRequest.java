@@ -1,12 +1,16 @@
 package com.pbit.policy;
 
-import java.io.InputStream;
 
 import com.pbit.service.Request;
 
 public class PolicyRequest extends Request {
-	public PolicyRequest(InputStream input) {
-		this.input = input;
+	public PolicyRequest() {
+	}
+	
+	public String toString(){
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("PolicyRequest+++");
+		return buffer.toString();
 	}
 
 }
