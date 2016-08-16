@@ -1,20 +1,15 @@
 package com.pbit.policy;
 
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 
-import com.pbit.server.Service;
 import com.pbit.server.nio.NioServer;
+import com.pbit.service.Request;
+import com.pbit.service.Response;
 
 public class PolicyServer extends NioServer {
-
-	public PolicyServer(int selector_pool_size) {
-		super(selector_pool_size);
-	}
-
 	@Override
-	public Service newService(Selector selector, SelectionKey key) {
-		return new PolicyService(selector, key);
+	public void service(Request request,Response response) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

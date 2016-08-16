@@ -3,6 +3,7 @@ package com.pbit;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.core.config.xml.XmlConfigurationFactory;
 import org.slf4j.Logger;
@@ -24,14 +25,17 @@ public class PolicyDeamon {
 		printStartHeder();
 		
 		
-		Server policy_server = new PolicyServer(3);
+		Server policy_server = new PolicyServer();
 		try {
-			policy_server.open(5000);
-			policy_server.start();
-			
-			
 			ByteBufferPool buffer_pool = new ByteBufferPool();
 			buffer_pool.initialize(1024,100);
+			
+			policy_server.setWorkPool(Executors.newCachedThreadPool());
+			policy_server.setBufferPool(buffer_pool);
+			
+			policy_server.open(5000);
+			policy_server.start();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

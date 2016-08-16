@@ -1,13 +1,18 @@
 package com.pbit.server;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+
+import com.pbit.server.util.ByteBufferPool;
 
 abstract public class Server implements Runnable 
 {
 	private Thread thread = null;
 	private int stop_wait_time = 1000;
 	
-
+	protected ExecutorService _WorkPool;
+	protected ByteBufferPool _BufferPool;
+	
     abstract public void open(int port) throws IOException;
     
 	public void start(){
@@ -21,6 +26,12 @@ abstract public class Server implements Runnable
 			thread.interrupt();
 			thread.join(stop_wait_time);
 		}
+	}
+	public void setWorkPool(ExecutorService pool){
+		_WorkPool = pool;
+	}
+	public void setBufferPool(ByteBufferPool pool){
+		_BufferPool = pool;
 	}
 	
 }
