@@ -13,7 +13,7 @@
     </RollingRandomAccessFile>
     <RollingRandomAccessFile name="Process" fileName="${sys:PS_LOG}//${sys:PS_INS}_processLog.log" filePattern="${sys:PS_LOG}//${sys:PS_INS}_process-%d{yyyy-MM-dd_HH}_%i.log" immediateFlush="true" append="true" ignoreExceptions="false">
         <PatternLayout>
-            <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            <Pattern>%d{HH:mm:ss} %p %C{1}.%M %m%n</Pattern>
         </PatternLayout>
         <Policies>
             <TimeBasedTriggeringPolicy interval="6" modulate="true"/>

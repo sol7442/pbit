@@ -61,8 +61,19 @@ public class ConsoleTester {
 	}
 
 	private static void request(Client client) {
-		// TODO Auto-generated method stub
 		
+		try {
+			client.output.write("consoltester..".getBytes());
+		
+			BufferedReader reader = new BufferedReader(new InputStreamReader(client.input));
+			String line = "";
+			while( (line = reader.readLine()) != null){
+				System.out.println(line);
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static void disconnect(Client client) {
