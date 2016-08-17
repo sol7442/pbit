@@ -17,13 +17,15 @@ public class PolicyServer extends NioServer {
 	@Override
 	public Request createRequest(ByteBuffer buffer) {
 		buffer.flip();
-		System.out.println("createRequest:" + new String(buffer.array()));
+		byte[] bytes = new byte[buffer.limit()];
+		buffer.get(bytes);
+		proclog.debug("createRequest:{}", new String(bytes));
 		return new PolicyRequest();
 	}
 
 	@Override
 	public Response createResponse(Request request) {
-		System.out.println("createRequest:" + request);
+		proclog.debug("createRequest:{}", request);
 		return new PolicyReponse();
 	}
 

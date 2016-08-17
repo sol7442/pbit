@@ -33,12 +33,12 @@ public abstract class ObjectPool<T> {
 			if(object == null){
 				object = create();
 			}
-			return object;
+			return clear(object);
 		}finally{
 			lock.unlock();
 		}
 	}
-	public void clear(){
+	public void removeAll(){
 		lock.lock();
 		try{
 			for(T object : this.list){
@@ -52,6 +52,7 @@ public abstract class ObjectPool<T> {
 	public int size(){
 		return this.list.size();
 	}
+	public abstract T clear(T object);
 	public abstract T create();
 	public abstract void destroy(T object);
 }

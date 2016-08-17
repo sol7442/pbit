@@ -120,7 +120,6 @@ abstract public class NioServer extends Server implements IServiceListener {
 			
 		}
 		public void run() {
-			
 			try{
 				Request request = createRequest(buffer);
 				Response response = createResponse(request);
@@ -132,9 +131,9 @@ abstract public class NioServer extends Server implements IServiceListener {
 				handler.result("result");
 			}catch(Exception e){
 				handler.result("Error");
+			}finally{
+				handler.wakeup(ReadWriteHandler.ON_WRITE);
 			}
-			
-			handler.wakeup(ReadWriteHandler.ON_WRITE);
 		}
 	}
 	

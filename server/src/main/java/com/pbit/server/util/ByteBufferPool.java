@@ -33,4 +33,9 @@ public class ByteBufferPool extends ObjectPool<ByteBuffer> {
 	public void destroy(ByteBuffer object) {
 		//
 	}
+	@Override
+	public ByteBuffer clear(ByteBuffer object) {
+		object.clear();
+		return object;
+	}
 }

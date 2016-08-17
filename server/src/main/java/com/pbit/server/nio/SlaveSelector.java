@@ -19,25 +19,34 @@ public class SlaveSelector extends Thread{
 	
 	public void run(){
 		try {
+			synchronized (this) {}
+			
             while (!Thread.interrupted()) {
-            	synchronized (this) {}
-            	
             	_Selector.select();
                 Set<SelectionKey> selected = _Selector.selectedKeys();
                 Iterator<SelectionKey> it = selected.iterator();
                 while (it.hasNext()){
-                    dispatch(it.next());
+                	SelectionKey key = it.next();
+                	it.remove();
+                    dispatch(key);
                 }
-                selected.clear();
             }
 		} catch (IOException e) {
 			//errlog.error("{}",e);
 		}
 	}
 	private void dispatch(SelectionKey key) {
-        Runnable r = (Runnable) (key.attachment());
-        if (r != null)
-            r.run();
+        ReadWriteHandler handler = (ReadWriteHandler) (key.attachment());
+        System.out.println("=== SELECTION KEY =======");
+        System.out.println("A:"+key.isAcceptable());
+        System.out.println("C:"+key.isConnectable());
+        System.out.println("R:"+key.isReadable());
+        System.out.println("V:"+key.isValid());
+        System.out.println("W:"+key.isWritable());
+        
+        if (handler != null){
+        	handler.run();
+        }
 	}
 	public void addCannel(SocketChannel channel,ReadWriteHandler handler) throws IOException {
 		synchronized (this) {
@@ -50,8 +59,9 @@ public class SlaveSelector extends Thread{
 			_SelectionKey.attach(handler);
 			_SelectionKey.interestOps(SelectionKey.OP_READ);
 			
-			handler.setChannel(_SocketChannel);
+//			handler.setChannel(_SocketChannel);
 			handler.setSelectionKey(_SelectionKey);
+			handler.setSelector(this);
 		}
 	}
 }
