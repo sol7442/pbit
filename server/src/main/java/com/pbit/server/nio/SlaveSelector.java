@@ -59,9 +59,7 @@ public class SlaveSelector extends Thread{
 			_SelectionKey.attach(handler);
 			_SelectionKey.interestOps(SelectionKey.OP_READ);
 			
-//			handler.setChannel(_SocketChannel);
 			handler.setSelectionKey(_SelectionKey);
-			handler.setSelector(this);
 		}
 	}
 }

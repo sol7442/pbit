@@ -3,19 +3,15 @@ package com.pbit.server.nio;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pbit.server.ServerException;
 import com.pbit.server.util.ByteBufferPool;
-import com.pbit.service.Service;
 
 public class ReadWriteHandler implements Runnable {
 
@@ -30,7 +26,6 @@ public class ReadWriteHandler implements Runnable {
 	protected Logger syslog  = LoggerFactory.getLogger("system");
 	protected Logger proclog = LoggerFactory.getLogger("process");
 	protected Logger errlog  = LoggerFactory.getLogger("error");
-	private SlaveSelector _Selector;
 	
 	public ReadWriteHandler(IServiceListener listener ) throws IOException {
 		_ServiceListener = listener;
@@ -172,10 +167,5 @@ public class ReadWriteHandler implements Runnable {
 
 	public void setSelectionKey(SelectionKey key) {
 		_SelectionKey = key;
-	}
-
-
-	public void setSelector(SlaveSelector selector) {
-		_Selector = selector;
 	}
 }
