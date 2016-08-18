@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.pbit.client.nio.NioClient;
 import com.pbit.client.socket.SocketClient;
 
 public class ConsoleTester {
@@ -63,12 +64,12 @@ public class ConsoleTester {
 	private static void request(Client client) {
 		
 		try {
-			client.output.write("consoltester..".getBytes());
-		
-			BufferedReader reader = new BufferedReader(new InputStreamReader(client.input));
-			String line = "";
-			while( (line = reader.readLine()) != null){
-				System.out.println(line);
+			client.request("consoltester..".getBytes());
+			byte[] res = client.response();
+			if(res != null){
+				System.out.println(new String(res));
+			}else{
+				System.out.println("Response is null");
 			}
 			
 		} catch (IOException e) {
@@ -85,7 +86,7 @@ public class ConsoleTester {
 	}
 
 	private static Client connenct() {
-		Client client = new SocketClient();
+		Client client = new NioClient();
 		try {
 			client.open(target_addr,target_port);
 		} catch (IOException e) {

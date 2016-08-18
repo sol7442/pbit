@@ -14,8 +14,8 @@ public class SocketClient extends Client{
 	public void open(String add, int port) throws IOException {
 		if(socket == null){
 			this.socket = new Socket(add,port);
-			this.input  = socket.getInputStream();
-			this.output = socket.getOutputStream();
+//			this.input  = socket.getInputStream();
+//			this.output = socket.getOutputStream();
 		}
 	}
 	@Override
@@ -24,5 +24,15 @@ public class SocketClient extends Client{
 			this.socket.close();
 			this.socket = null;
 		}
+	}
+	@Override
+	public void request(byte[] data) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public byte[] response() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
