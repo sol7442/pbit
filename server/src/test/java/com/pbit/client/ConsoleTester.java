@@ -67,7 +67,7 @@ public class ConsoleTester {
 			client.request("consoltester..".getBytes());
 			byte[] res = client.response();
 			if(res != null){
-				System.out.println(new String(res));
+				System.out.println("response : " + new String(res));
 			}else{
 				System.out.println("Response is null");
 			}

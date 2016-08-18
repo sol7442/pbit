@@ -102,8 +102,8 @@ public class NioClient extends Client implements Runnable {
 
 	private void processWrite(SelectionKey key) throws IOException {
 		WritableByteChannel ch = (WritableByteChannel)key.channel();
-    	synchronized (writeBuf) {
-    		writeBuf.flip();
+    	//synchronized (writeBuf) {
+    		//writeBuf.flip();
     		int writeNum = 0;
     		System.out.println(writeBuf.remaining());
     		while(writeBuf.remaining() > 0){
@@ -112,7 +112,6 @@ public class NioClient extends Client implements Runnable {
     		
     		if (writeNum > 0){
     			key.interestOps(SelectionKey.OP_READ);
-    			writeBuf.notify();
     		}
     		else if (writeNum == -1) {
     			System.out.println("peer closed write channel");
@@ -120,7 +119,7 @@ public class NioClient extends Client implements Runnable {
     		}
     		writeBuf.clear();
     		System.out.println("write  ---> ("+writeNum+")");
-	    }
+	   // }
 	}
 
 	private void processRead(SelectionKey key) throws IOException {
@@ -149,7 +148,7 @@ public class NioClient extends Client implements Runnable {
 	@Override
 	public void request(byte[] data) throws IOException {
 		if(!connected.get()){throw new IOException("not connected");}
-		synchronized (writeBuf) {
+		//synchronized (writeBuf) {
 			writeBuf = ByteBuffer.wrap(data);
 			if (writeBuf.hasRemaining()) {
 				SelectionKey key = _socketChannel.keyFor(_selector);
@@ -157,7 +156,7 @@ public class NioClient extends Client implements Runnable {
 		        _selector.wakeup();
 			}
 			System.out.println("request : ("+writeBuf.remaining()+")" + new String(data));
-		}
+		//}
 	}
 
 	@Override
