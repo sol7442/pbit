@@ -10,7 +10,7 @@ import com.pbit.client.socket.SocketClient;
 public class ConsoleTester {
 
 	private static String target_addr = "127.0.0.1";
-	private static int target_port = 5000;
+	private static int target_port = 5001;
 	
 	public static void main(String[] args) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -89,7 +89,15 @@ public class ConsoleTester {
 		Client client = new NioClient();
 		try {
 			client.open(target_addr,target_port);
+			
+			while(!client.isConnected()){
+				Thread.sleep(500);
+				System.out.println("wait--connected");
+			}
+			System.out.println("connected--->");
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		return client;

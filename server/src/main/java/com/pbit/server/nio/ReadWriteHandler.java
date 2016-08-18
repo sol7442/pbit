@@ -20,6 +20,7 @@ public class ReadWriteHandler implements Runnable {
 
 	private BlockingQueue<ByteBuffer[]> _WriteQueue = new ArrayBlockingQueue<ByteBuffer[]>(100);
     private SelectionKey _SelectionKey = null;
+    private SlaveSelector _Selector = null;
     
     public IServiceListener _ServiceListener;
     
@@ -103,11 +104,10 @@ public class ReadWriteHandler implements Runnable {
 	}
 	
 	public synchronized void wakeup(int flag){
-		_SelectionKey.selector().wakeup();
 		if(ON_READ == flag){
-			_SelectionKey.interestOps(SelectionKey.OP_READ);
+			_Selector.interestOps(_SelectionKey,SelectionKey.OP_READ);
 		}else if(ON_WRITE == flag){
-			_SelectionKey.interestOps(SelectionKey.OP_WRITE);
+			_Selector.interestOps(_SelectionKey,SelectionKey.OP_WRITE);
 		}
 		proclog.debug("Opt : {}",flag);
 	}
@@ -164,7 +164,9 @@ public class ReadWriteHandler implements Runnable {
 		} 
 	}
 
-
+	public void setSelector(SlaveSelector selector){
+		_Selector = selector;
+	}
 	public void setSelectionKey(SelectionKey key) {
 		_SelectionKey = key;
 	}

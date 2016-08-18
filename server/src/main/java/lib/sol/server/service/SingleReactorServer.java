@@ -8,7 +8,7 @@ public class SingleReactorServer  {
 	public static void main(String[] args) {
 		NioServer server = new NioServer();
 		try {
-			server.open(5000);
+			server.open(5001);
 			server.start();
 		} catch (IOException e) {
 			e.printStackTrace();

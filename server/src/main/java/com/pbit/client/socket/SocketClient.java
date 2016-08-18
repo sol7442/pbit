@@ -35,4 +35,9 @@ public class SocketClient extends Client{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public boolean isConnected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

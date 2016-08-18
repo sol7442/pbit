@@ -9,6 +9,7 @@ import java.util.Set;
 
 public class SlaveSelector extends Thread{
 
+	private Object selectorLock = new Object();
 	private Selector _Selector;
 	public SlaveSelector() throws IOException{
 		_Selector = Selector.open();
@@ -19,10 +20,13 @@ public class SlaveSelector extends Thread{
 	
 	public void run(){
 		try {
-			synchronized (this) {}
-			
             while (!Thread.interrupted()) {
-            	_Selector.select();
+            	synchronized (selectorLock) {
+            		System.out.println("loop = selectorLock");
+            	}
+            	int sel = _Selector.select();
+            	System.out.println("selected : " + sel);
+            	
                 Set<SelectionKey> selected = _Selector.selectedKeys();
                 Iterator<SelectionKey> it = selected.iterator();
                 while (it.hasNext()){
@@ -49,7 +53,7 @@ public class SlaveSelector extends Thread{
         }
 	}
 	public void addCannel(SocketChannel channel,ReadWriteHandler handler) throws IOException {
-		synchronized (this) {
+		synchronized (selectorLock) {
 			SocketChannel _SocketChannel = channel;
 			_SocketChannel.configureBlocking(false);
 
@@ -60,6 +64,13 @@ public class SlaveSelector extends Thread{
 			_SelectionKey.interestOps(SelectionKey.OP_READ);
 			
 			handler.setSelectionKey(_SelectionKey);
+			handler.setSelector(this);
+		}
+	}
+	public void interestOps(SelectionKey _SelectionKey, int op) {
+		synchronized (selectorLock) {
+			_Selector.wakeup();
+			_SelectionKey.interestOps(op);
 		}
 	}
 }
