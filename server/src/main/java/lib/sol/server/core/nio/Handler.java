@@ -20,6 +20,9 @@ public class Handler implements Runnable {
 	public Handler(Selector selector, SocketChannel sc) throws IOException {
 		channel = 	sc;
         channel.configureBlocking(false);
+        channel.socket().setTcpNoDelay(true);
+        channel.socket().setKeepAlive(true);
+        channel.socket().setReuseAddress(true);
         selKey = channel.register(selector, SelectionKey.OP_READ);
         selKey.attach(this);
         selKey.interestOps(SelectionKey.OP_READ);
@@ -89,6 +92,7 @@ public class Handler implements Runnable {
 
 	void write() throws IOException {
         int numBytes = 0;
+ 
         try {
         //	writeBuf.flip();
          

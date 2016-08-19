@@ -10,7 +10,7 @@ import com.pbit.client.socket.SocketClient;
 public class ConsoleTester {
 
 	private static String target_addr = "127.0.0.1";
-	private static int target_port = 5001;
+	private static int target_port = 5000;
 	
 	public static void main(String[] args) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
