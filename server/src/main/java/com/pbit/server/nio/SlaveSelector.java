@@ -41,13 +41,6 @@ public class SlaveSelector extends Thread{
 	}
 	private void dispatch(SelectionKey key) {
         ReadWriteHandler handler = (ReadWriteHandler) (key.attachment());
-        System.out.println("=== SELECTION KEY =======");
-        System.out.println("A:"+key.isAcceptable());
-        System.out.println("C:"+key.isConnectable());
-        System.out.println("R:"+key.isReadable());
-        System.out.println("V:"+key.isValid());
-        System.out.println("W:"+key.isWritable());
-        
         if (handler != null){
         	handler.run();
         }

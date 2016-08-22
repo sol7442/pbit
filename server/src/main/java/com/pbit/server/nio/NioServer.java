@@ -42,24 +42,11 @@ abstract public class NioServer extends Server implements IServiceListener {
 	private int _CurSel = 0;
 	private SlaveSelector[] _Selectors;
 	public NioServer(){	}
+	
+	
 	@Override
 	public void open(int port) throws IOException {
-		_ServerChannel = ServerSocketChannel.open();
-		_ServerChannel.socket().setReuseAddress(true);
-		_ServerChannel.socket().bind(new InetSocketAddress(port));
-		_ServerChannel.configureBlocking(false);
 
-		_AcceptSelector = Selector.open();
-		SelectionKey sk = _ServerChannel.register(_AcceptSelector, SelectionKey.OP_ACCEPT);
-		sk.attach(new Acceptor(this));
-		
-		_Selectors = new SlaveSelector[_SelectorSize];
-		for(int i=0;i<_SelectorSize;i++){
-			_Selectors[i] = new SlaveSelector();
-			_Selectors[i].start();
-		}
-		
-		syslog.info("Server Open : {}",_ServerChannel.toString());
 	}
 	
 	public void run() {
