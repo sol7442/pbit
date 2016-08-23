@@ -45,36 +45,27 @@ public class NioAcceptor extends Acceptor {
 	}
 
 	@Override
-	public int accept() {
+	public int accept() throws IOException{
 		int count = 0;
         Set<SelectionKey> selected = _AcceptSelector.selectedKeys();	// accept
         count = selected.size();
+
         Iterator<SelectionKey> it = selected.iterator();
         while (it.hasNext()){
+        	it.remove();
         	SelectionKey key = it.next();
-            dispatch(key);
+        	if(key.isAcceptable()){
+        		SocketChannel channel = _ServerChannel.accept();
+        		if (channel != null){
+                	ReadWriteHandler handler = new ReadWriteHandler(_Listener);
+                	_Selectors[_CurrentSelecotor++].addCannel(channel,handler);
+                    if(_CurrentSelecotor == _SelectorSize){
+                    	_CurrentSelecotor = 0;
+                    }
+                    proclog.debug("new Connection Accept : ({}){}",_CurrentSelecotor,channel.toString());
+                }
+        	}
         }
-        selected.clear();
 		return count;
 	}
-
-
-
-	private void dispatch(SelectionKey next) {
-        try {
-            SocketChannel channel = _ServerChannel.accept();
-            if (channel != null){
-            	ReadWriteHandler handler = new ReadWriteHandler(_Listener);
-            	_Selectors[_CurrentSelecotor++].addCannel(channel,handler);
-                if(_CurrentSelecotor == _SelectorSize){
-                	_CurrentSelecotor = 0;
-                }
-                proclog.debug("new Connection Accept : ({}){}",_CurrentSelecotor,channel.toString());
-            }
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-	}
-
 }

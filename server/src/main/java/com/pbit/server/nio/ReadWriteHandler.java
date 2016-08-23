@@ -11,13 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pbit.server.ServerException;
+import com.pbit.server.session.ISession;
 import com.pbit.server.util.ByteBufferPool;
 
-public class ReadWriteHandler implements Runnable {
+public class ReadWriteHandler implements ISession, Runnable {
 
 	public final static int ON_READ 	= 1;
 	public final static int ON_WRITE	= 2;
 
+	private String _SessionID;
 	private BlockingQueue<ByteBuffer[]> _WriteQueue = new ArrayBlockingQueue<ByteBuffer[]>(100);
     private SelectionKey _SelectionKey = null;
     private SlaveSelector _Selector = null;
@@ -28,22 +30,16 @@ public class ReadWriteHandler implements Runnable {
 	protected Logger proclog = LoggerFactory.getLogger("process");
 	protected Logger errlog  = LoggerFactory.getLogger("error");
 	
-	public ReadWriteHandler(IServiceListener listener ) throws IOException {
+	public ReadWriteHandler(IServiceListener listener )  {
 		_ServiceListener = listener;
 	}
 
 
 	public void run() {
         if (_SelectionKey.isReadable()){
-        	System.out.println("read_SelectionKey.isValid : " + _SelectionKey.isValid());
-        	System.out.println("read_SelectionKey.channel : " + _SelectionKey.channel());
-        	
             read();
         }
         else if (_SelectionKey.isWritable()){
-        	System.out.println("write_SelectionKey.isValid : " + _SelectionKey.isValid());
-        	System.out.println("write_SelectionKey.channel : " + _SelectionKey.channel());
-        	
             write();
         }
 	}
@@ -93,7 +89,6 @@ public class ReadWriteHandler implements Runnable {
 				}
 				if(numBytes >0){
 					_ServiceListener.requestArrived(this,buffer);
-					//wakeup(ON_WRITE);
 				}
 			} catch (IOException e) {
 				closeSocketChannel();
@@ -169,5 +164,13 @@ public class ReadWriteHandler implements Runnable {
 	}
 	public void setSelectionKey(SelectionKey key) {
 		_SelectionKey = key;
+	}
+
+
+	public String getId() {
+		return _SessionID;
+	}
+	public void setId(String id){
+		_SessionID = id;
 	}
 }

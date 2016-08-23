@@ -6,10 +6,11 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class SlaveSelector extends Thread{
 
-	private Object selectorLock = new Object();
+	private ReentrantLock selectorLock = new ReentrantLock();
 	private Selector _Selector;
 	public SlaveSelector() throws IOException{
 		_Selector = Selector.open();
@@ -21,9 +22,6 @@ public class SlaveSelector extends Thread{
 	public void run(){
 		try {
             while (!Thread.interrupted()) {
-            	synchronized (selectorLock) {
-            		System.out.println("loop = selectorLock");
-            	}
             	int sel = _Selector.select();
             	System.out.println("selected : " + sel);
             	
@@ -46,24 +44,29 @@ public class SlaveSelector extends Thread{
         }
 	}
 	public void addCannel(SocketChannel channel,ReadWriteHandler handler) throws IOException {
-		synchronized (selectorLock) {
+		selectorLock.lock();
+		try{
 			SocketChannel _SocketChannel = channel;
 			_SocketChannel.configureBlocking(false);
 
 			_Selector.wakeup();
+			SelectionKey selectionKey = _SocketChannel.register(_Selector, SelectionKey.OP_READ);
+			selectionKey.attach(handler);
+			selectionKey.interestOps(SelectionKey.OP_READ);
 			
-			SelectionKey _SelectionKey = _SocketChannel.register(_Selector, SelectionKey.OP_READ);
-			_SelectionKey.attach(handler);
-			_SelectionKey.interestOps(SelectionKey.OP_READ);
-			
-			handler.setSelectionKey(_SelectionKey);
+			handler.setSelectionKey(selectionKey);
 			handler.setSelector(this);
+		}finally{
+			selectorLock.unlock();
 		}
 	}
 	public void interestOps(SelectionKey _SelectionKey, int op) {
-		synchronized (selectorLock) {
+		selectorLock.lock();
+		try{
 			_Selector.wakeup();
 			_SelectionKey.interestOps(op);
+		}finally{
+			selectorLock.unlock();
 		}
 	}
 }
