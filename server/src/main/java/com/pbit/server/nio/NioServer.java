@@ -2,6 +2,8 @@ package com.pbit.server.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -48,16 +50,19 @@ abstract public class NioServer extends Server implements IServiceListener {
 	
 	public void run() {
 		try {
-			int count = _Acceptor.accept();
+			while(true){
+				int count = _Acceptor.accept();
+				proclog.debug("new Connection {}" , count);
+			}
 		} catch (IOException e) {
 			errlog.error("{}",e);
 		}
 	}
-	private void dispatch(SelectionKey key) {
-        Runnable r = (Runnable) (key.attachment());
-        if (r != null)
-            r.run();
-	}
+//	private void dispatch(SelectionKey key) {
+//        Runnable r = (Runnable) (key.attachment());
+//        if (r != null)
+//            r.run();
+//	}
 //	private class Acceptor implements Runnable {
 //		IServiceListener _Listener;
 //		public Acceptor(IServiceListener listener) {
@@ -83,35 +88,38 @@ abstract public class NioServer extends Server implements IServiceListener {
 //		}
 //	}
 	
-	public void requestArrived(ReadWriteHandler handler, ByteBuffer buffer) {
-		//_WorkPool.execute(new Worker(handler,buffer));
+	public void requestArrived(SocketChannelHandler handler, ByteBuffer buffer) {
+		_WorkPool.execute(new Worker(handler,buffer));
+	}
+	public void addNewSession(Socket socket){
+		System.out.println("new Session -- : " + socket.toString());
 	}
 	
-//	private class Worker implements Runnable{
-//		private ReadWriteHandler handler;
-//		private ByteBuffer buffer;
-//		public Worker(ReadWriteHandler handler, ByteBuffer buffer){
-//			this.handler = handler;
-//			this.buffer  = buffer;
-//			
-//		}
-//		public void run() {
-//			try{
-//				Request request = createRequest(buffer);
-//				Response response = createResponse(request);
-//				ByteBufferPool.getInstance().offer(buffer);
-//				
-//				Service  service = newService();
-//				service.service(request, response);
-//				
-//				handler.result("result");
-//			}catch(Exception e){
-//				handler.result("Error");
-//			}finally{
-//				handler.wakeup(ReadWriteHandler.ON_WRITE);
-//			}
-//		}
-//	}
+	private class Worker implements Runnable{
+		private SocketChannelHandler handler;
+		private ByteBuffer buffer;
+		public Worker(SocketChannelHandler handler, ByteBuffer buffer){
+			this.handler = handler;
+			this.buffer  = buffer;
+			
+		}
+		public void run() {
+			try{
+				Request request = createRequest(buffer);
+				Response response = createResponse(request);
+				ByteBufferPool.getInstance().offer(buffer);
+				
+				Service  service = newService();
+				service.service(request, response);
+				
+				handler.result("result");
+			}catch(Exception e){
+				handler.result("Error");
+			}finally{
+				handler.wakeup(SelectionKey.OP_WRITE);
+			}
+		}
+	}
 	
 	public abstract Service newService();
 	public abstract Request createRequest(ByteBuffer buffer);

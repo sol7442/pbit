@@ -8,10 +8,21 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.pbit.server.ISocketHandler;
+
 public class SlaveSelector extends Thread{
 
-	private ReentrantLock selectorLock = new ReentrantLock();
+	//private ReentrantLock selectorLock = new ReentrantLock();
 	private Selector _Selector;
+	private Object selectorLock = new Object();
+	
+	protected Logger syslog  = LoggerFactory.getLogger("system");
+	protected Logger proclog = LoggerFactory.getLogger("process");
+	protected Logger errlog  = LoggerFactory.getLogger("error");
+	
 	public SlaveSelector() throws IOException{
 		_Selector = Selector.open();
 	}
@@ -21,10 +32,12 @@ public class SlaveSelector extends Thread{
 	
 	public void run(){
 		try {
+			synchronized (selectorLock) {
+				proclog.info("Start SlaveSelector Loop");
+			}
+			
             while (!Thread.interrupted()) {
-            	int sel = _Selector.select();
-            	System.out.println("selected : " + sel);
-            	
+				_Selector.select(); // wait
                 Set<SelectionKey> selected = _Selector.selectedKeys();
                 Iterator<SelectionKey> it = selected.iterator();
                 while (it.hasNext()){
@@ -38,37 +51,32 @@ public class SlaveSelector extends Thread{
 		}
 	}
 	private void dispatch(SelectionKey key) {
-        ReadWriteHandler handler = (ReadWriteHandler) (key.attachment());
-        if (handler != null){
-        	handler.run();
+		ISocketHandler handler = (ISocketHandler)key.attachment();
+        if (key.isReadable()){
+        	handler.read();
+        }
+        else if (key.isWritable()){
+        	handler.write();
         }
 	}
-	public void addCannel(SocketChannel channel,ReadWriteHandler handler) throws IOException {
-		selectorLock.lock();
-		try{
+	public void addCannel(SocketChannel channel,SocketChannelHandler handler) throws IOException {
+		synchronized (selectorLock) {
 			SocketChannel _SocketChannel = channel;
 			_SocketChannel.configureBlocking(false);
-
+			
 			_Selector.wakeup();
+			
 			SelectionKey selectionKey = _SocketChannel.register(_Selector, SelectionKey.OP_READ);
 			selectionKey.attach(handler);
 			selectionKey.interestOps(SelectionKey.OP_READ);
-			
-			;
-			handler.setId(String.valueOf(_SocketChannel.socket().toString().hashCode()));			
 			handler.setSelectionKey(selectionKey);
 			handler.setSelector(this);
-		}finally{
-			selectorLock.unlock();
 		}
 	}
 	public void interestOps(SelectionKey _SelectionKey, int op) {
-		selectorLock.lock();
-		try{
-			_Selector.wakeup();
+		synchronized (selectorLock) {
 			_SelectionKey.interestOps(op);
-		}finally{
-			selectorLock.unlock();
+			_Selector.wakeup();
 		}
 	}
 }

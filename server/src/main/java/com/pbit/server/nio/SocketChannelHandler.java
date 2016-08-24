@@ -10,16 +10,16 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.pbit.server.ISocketHandler;
 import com.pbit.server.ServerException;
 import com.pbit.server.session.ISession;
 import com.pbit.server.util.ByteBufferPool;
 
-public class ReadWriteHandler implements ISession, Runnable {
+public class SocketChannelHandler implements ISocketHandler {
 
 	public final static int ON_READ 	= 1;
 	public final static int ON_WRITE	= 2;
 
-	private String _SessionID;
 	private BlockingQueue<ByteBuffer[]> _WriteQueue = new ArrayBlockingQueue<ByteBuffer[]>(100);
     private SelectionKey _SelectionKey = null;
     private SlaveSelector _Selector = null;
@@ -30,21 +30,12 @@ public class ReadWriteHandler implements ISession, Runnable {
 	protected Logger proclog = LoggerFactory.getLogger("process");
 	protected Logger errlog  = LoggerFactory.getLogger("error");
 	
-	public ReadWriteHandler(IServiceListener listener )  {
+	public SocketChannelHandler(IServiceListener listener )  {
 		_ServiceListener = listener;
 	}
 
 
-	public void run() {
-        if (_SelectionKey.isReadable()){
-            read();
-        }
-        else if (_SelectionKey.isWritable()){
-            write();
-        }
-	}
-
-	synchronized private void write(){
+	synchronized public void write(){
 		try {
 			ByteBufferPool bufferpool = ByteBufferPool.getInstance();
 			ByteBuffer[] buffers = _WriteQueue.poll();
@@ -76,7 +67,7 @@ public class ReadWriteHandler implements ISession, Runnable {
 		}
 	}
 
-	synchronized private void read(){
+	synchronized public void read(){
 		int numBytes = 0;
 		try {
 			ByteBufferPool bufferpool = ByteBufferPool.getInstance();
@@ -96,15 +87,12 @@ public class ReadWriteHandler implements ISession, Runnable {
 		} catch (ServerException e) {
 			e.printStackTrace();
 		}
+		System.out.println("read byte : " + numBytes);
 	}
 	
 	public synchronized void wakeup(int flag){
-		if(ON_READ == flag){
-			_Selector.interestOps(_SelectionKey,SelectionKey.OP_READ);
-		}else if(ON_WRITE == flag){
-			_Selector.interestOps(_SelectionKey,SelectionKey.OP_WRITE);
-		}
 		proclog.debug("Opt : {}",flag);
+		_Selector.interestOps(_SelectionKey,flag);
 	}
     
 	private void closeSocketChannel(){
@@ -164,13 +152,5 @@ public class ReadWriteHandler implements ISession, Runnable {
 	}
 	public void setSelectionKey(SelectionKey key) {
 		_SelectionKey = key;
-	}
-
-
-	public String getId() {
-		return _SessionID;
-	}
-	public void setId(String id){
-		_SessionID = id;
 	}
 }

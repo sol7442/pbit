@@ -34,31 +34,35 @@ public class NioAcceptor extends Acceptor {
 		_ServerChannel.socket().setReuseAddress(true);
 		_ServerChannel.socket().bind(new InetSocketAddress(port));
 		_ServerChannel.configureBlocking(false);
+		
 		_AcceptSelector = Selector.open();
 		_ServerChannel.register(_AcceptSelector, SelectionKey.OP_ACCEPT);
-		_Selectors = new SlaveSelector[_SelectorSize];
+		
+		_Selectors = new SlaveSelector[_SelectorSize];	
 		for(int i=0;i<_SelectorSize;i++){
 			_Selectors[i] = new SlaveSelector();
 			_Selectors[i].start();
 		}
-		syslog.info("Server Open : {}",_ServerChannel.toString());
+		syslog.info("Server Open : {},{}",_ServerChannel.toString(),_Selectors.length);
 	}
 
 	@Override
 	public int accept() throws IOException{
 		int count = 0;
-        Set<SelectionKey> selected = _AcceptSelector.selectedKeys();	// accept
+		_AcceptSelector.select();// accept
+		Set<SelectionKey> selected = _AcceptSelector.selectedKeys();	
         count = selected.size();
 
         Iterator<SelectionKey> it = selected.iterator();
-        while (it.hasNext()){
-        	it.remove();
+        while (it.hasNext()){        	
         	SelectionKey key = it.next();
+        	it.remove();
         	if(key.isAcceptable()){
         		SocketChannel channel = _ServerChannel.accept();
         		if (channel != null){
-                	ReadWriteHandler handler = new ReadWriteHandler(_Listener);
+                	SocketChannelHandler handler = new SocketChannelHandler(_Listener);
                 	_Selectors[_CurrentSelecotor++].addCannel(channel,handler);
+                	_Listener.addNewSession(channel.socket());
                     if(_CurrentSelecotor == _SelectorSize){
                     	_CurrentSelecotor = 0;
                     }
