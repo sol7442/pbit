@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="server">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="D:/eclipse/"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="D:/Dev/lib/junit/junit/4.12/junit-4.12.jar"/>
+        <pathelement location="D:/Dev/lib/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/logging/log4j/log4j-slf4j-impl/2.6.2/log4j-slf4j-impl-2.6.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/logging/log4j/log4j-api/2.6.2/log4j-api-2.6.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/jmeter/ApacheJMeter_java/3.0/ApacheJMeter_java-3.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/jmeter/jorphan/3.0/jorphan-3.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/jmeter/ApacheJMeter_core/3.0/ApacheJMeter_core-3.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/jmeter/ApacheJMeter_components/3.0/ApacheJMeter_components-3.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/ow2/asm/asm/5.1/asm-5.1.jar"/>
+        <pathelement location="D:/Dev/lib/net/minidev/accessors-smart/1.1/accessors-smart-1.1.jar"/>
+        <pathelement location="D:/Dev/lib/bsf/bsf/2.4.0/bsf-2.4.0.jar"/>
+        <pathelement location="D:/Dev/lib/avalon-framework/avalon-framework/4.1.4/avalon-framework-4.1.4.jar"/>
+        <pathelement location="D:/Dev/lib/org/beanshell/bsh/2.0b5/bsh-2.0b5.jar"/>
+        <pathelement location="D:/Dev/lib/org/bouncycastle/bcmail-jdk15on/1.49/bcmail-jdk15on-1.49.jar"/>
+        <pathelement location="D:/Dev/lib/org/bouncycastle/bcprov-jdk15on/1.49/bcprov-jdk15on-1.49.jar"/>
+        <pathelement location="D:/Dev/lib/org/bouncycastle/bcpkix-jdk15on/1.49/bcpkix-jdk15on-1.49.jar"/>
+        <pathelement location="D:/Dev/lib/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+        <pathelement location="D:/Dev/lib/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-dbcp2/2.1.1/commons-dbcp2-2.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
+        <pathelement location="D:/Dev/lib/commons-io/commons-io/2.4/commons-io-2.4.jar"/>
+        <pathelement location="D:/Dev/lib/commons-jexl/commons-jexl/1.1/commons-jexl-1.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-jexl/2.1.1/commons-jexl-2.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-jexl3/3.0/commons-jexl3-3.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar"/>
+        <pathelement location="D:/Dev/lib/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
+        <pathelement location="D:/Dev/lib/commons-net/commons-net/3.4/commons-net-3.4.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar"/>
+        <pathelement location="D:/Dev/lib/dnsjava/dnsjava/2.1.7/dnsjava-2.1.7.jar"/>
+        <pathelement location="D:/Dev/lib/excalibur-logger/excalibur-logger/1.1/excalibur-logger-1.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/codehaus/groovy/groovy-all/2.4.6/groovy-all-2.4.6.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/httpcomponents/httpmime/4.5.2/httpmime-4.5.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar"/>
+        <pathelement location="D:/Dev/lib/oro/oro/2.0.8/oro-2.0.8.jar"/>
+        <pathelement location="D:/Dev/lib/jcharts/jcharts/0.7.5/jcharts-0.7.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/mozilla/rhino/1.7.7.1/rhino-1.7.7.1.jar"/>
+        <pathelement location="D:/Dev/lib/logkit/logkit/2.0/logkit-2.0.jar"/>
+        <pathelement location="D:/Dev/lib/net/sf/jtidy/jtidy/r938/jtidy-r938.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/tika/tika-core/1.12/tika-core-1.12.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/tika/tika-parsers/1.12/tika-parsers-1.12.jar"/>
+        <pathelement location="D:/Dev/lib/org/gagravarr/vorbis-java-tika/0.6/vorbis-java-tika-0.6.jar"/>
+        <pathelement location="D:/Dev/lib/com/healthmarketscience/jackcess/jackcess/2.1.2/jackcess-2.1.2.jar"/>
+        <pathelement location="D:/Dev/lib/commons-lang/commons-lang/2.6/commons-lang-2.6.jar"/>
+        <pathelement location="D:/Dev/lib/com/healthmarketscience/jackcess/jackcess-encrypt/2.1.1/jackcess-encrypt-2.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/net/sourceforge/jmatio/jmatio/1.0/jmatio-1.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/james/apache-mime4j-core/0.7.2/apache-mime4j-core-0.7.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/james/apache-mime4j-dom/0.7.2/apache-mime4j-dom-0.7.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-compress/1.10/commons-compress-1.10.jar"/>
+        <pathelement location="D:/Dev/lib/org/tukaani/xz/1.5/xz-1.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/pdfbox/pdfbox/1.8.10/pdfbox-1.8.10.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/pdfbox/fontbox/1.8.10/fontbox-1.8.10.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/pdfbox/jempbox/1.8.10/jempbox-1.8.10.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/poi/poi/3.13/poi-3.13.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/poi/poi-scratchpad/3.13/poi-scratchpad-3.13.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/poi/poi-ooxml/3.13/poi-ooxml-3.13.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/poi/poi-ooxml-schemas/3.13/poi-ooxml-schemas-3.13.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/ccil/cowan/tagsoup/tagsoup/1.2.1/tagsoup-1.2.1.jar"/>
+        <pathelement location="D:/Dev/lib/com/googlecode/mp4parser/isoparser/1.0.2/isoparser-1.0.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/aspectj/aspectjrt/1.8.0/aspectjrt-1.8.0.jar"/>
+        <pathelement location="D:/Dev/lib/com/drewnoakes/metadata-extractor/2.8.0/metadata-extractor-2.8.0.jar"/>
+        <pathelement location="D:/Dev/lib/com/adobe/xmp/xmpcore/5.1.2/xmpcore-5.1.2.jar"/>
+        <pathelement location="D:/Dev/lib/de/l3s/boilerpipe/boilerpipe/1.1.0/boilerpipe-1.1.0.jar"/>
+        <pathelement location="D:/Dev/lib/com/rometools/rome/1.5.1/rome-1.5.1.jar"/>
+        <pathelement location="D:/Dev/lib/com/rometools/rome-utils/1.5.1/rome-utils-1.5.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/jdom/jdom/2.0.2/jdom-2.0.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/gagravarr/vorbis-java-core/0.6/vorbis-java-core-0.6.jar"/>
+        <pathelement location="D:/Dev/lib/com/googlecode/juniversalchardet/juniversalchardet/1.0.3/juniversalchardet-1.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/codelibs/jhighlight/1.0.2/jhighlight-1.0.2.jar"/>
+        <pathelement location="D:/Dev/lib/com/pff/java-libpst/0.8.1/java-libpst-0.8.1.jar"/>
+        <pathelement location="D:/Dev/lib/com/github/junrar/junrar/0.7/junrar-0.7.jar"/>
+        <pathelement location="D:/Dev/lib/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-vfs2/2.0/commons-vfs2-2.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/maven/scm/maven-scm-api/1.4/maven-scm-api-1.4.jar"/>
+        <pathelement location="D:/Dev/lib/org/codehaus/plexus/plexus-utils/1.5.6/plexus-utils-1.5.6.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/maven/scm/maven-scm-provider-svnexe/1.4/maven-scm-provider-svnexe-1.4.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/maven/scm/maven-scm-provider-svn-commons/1.4/maven-scm-provider-svn-commons-1.4.jar"/>
+        <pathelement location="D:/Dev/lib/regexp/regexp/1.3/regexp-1.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/cxf/cxf-rt-rs-client/3.0.3/cxf-rt-rs-client-3.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/cxf/cxf-rt-transports-http/3.0.3/cxf-rt-transports-http-3.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/cxf/cxf-core/3.0.3/cxf-core-3.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/codehaus/woodstox/woodstox-core-asl/4.4.1/woodstox-core-asl-4.4.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/codehaus/woodstox/stax2-api/3.1.4/stax2-api-3.1.4.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/ws/xmlschema/xmlschema-core/2.1.0/xmlschema-core-2.1.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/cxf/cxf-rt-frontend-jaxrs/3.0.3/cxf-rt-frontend-jaxrs-3.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/javax/ws/rs/javax.ws.rs-api/2.0.1/javax.ws.rs-api-2.0.1.jar"/>
+        <pathelement location="D:/Dev/lib/javax/annotation/javax.annotation-api/1.2/javax.annotation-api-1.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/opennlp/opennlp-tools/1.5.3/opennlp-tools-1.5.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/opennlp/opennlp-maxent/3.0.3/opennlp-maxent-3.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/net/sf/jwordnet/jwnl/1.3.3/jwnl-1.3.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-exec/1.3/commons-exec-1.3.jar"/>
+        <pathelement location="D:/Dev/lib/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/json/json/20140107/json-20140107.jar"/>
+        <pathelement location="D:/Dev/lib/com/google/code/gson/gson/2.2.4/gson-2.2.4.jar"/>
+        <pathelement location="D:/Dev/lib/edu/ucar/netcdf4/4.5.5/netcdf4-4.5.5.jar"/>
+        <pathelement location="D:/Dev/lib/net/jcip/jcip-annotations/1.0/jcip-annotations-1.0.jar"/>
+        <pathelement location="D:/Dev/lib/net/java/dev/jna/jna/4.1.0/jna-4.1.0.jar"/>
+        <pathelement location="D:/Dev/lib/edu/ucar/grib/4.5.5/grib-4.5.5.jar"/>
+        <pathelement location="D:/Dev/lib/com/google/protobuf/protobuf-java/2.5.0/protobuf-java-2.5.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/jdom/jdom2/2.0.4/jdom2-2.0.4.jar"/>
+        <pathelement location="D:/Dev/lib/edu/ucar/jj2000/5.2/jj2000-5.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/itadaki/bzip2/0.9.1/bzip2-0.9.1.jar"/>
+        <pathelement location="D:/Dev/lib/edu/ucar/cdm/4.5.5/cdm-4.5.5.jar"/>
+        <pathelement location="D:/Dev/lib/edu/ucar/udunits/4.5.5/udunits-4.5.5.jar"/>
+        <pathelement location="D:/Dev/lib/joda-time/joda-time/2.2/joda-time-2.2.jar"/>
+        <pathelement location="D:/Dev/lib/org/quartz-scheduler/quartz/2.2.0/quartz-2.2.0.jar"/>
+        <pathelement location="D:/Dev/lib/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/net/sf/ehcache/ehcache-core/2.6.2/ehcache-core-2.6.2.jar"/>
+        <pathelement location="D:/Dev/lib/com/google/guava/guava/17.0/guava-17.0.jar"/>
+        <pathelement location="D:/Dev/lib/com/beust/jcommander/1.35/jcommander-1.35.jar"/>
+        <pathelement location="D:/Dev/lib/edu/ucar/httpservices/4.5.5/httpservices-4.5.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/commons/commons-csv/1.0/commons-csv-1.0.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/sis/core/sis-utility/0.5/sis-utility-0.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/sis/storage/sis-netcdf/0.5/sis-netcdf-0.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/sis/storage/sis-storage/0.5/sis-storage-0.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/sis/core/sis-referencing/0.5/sis-referencing-0.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/sis/core/sis-metadata/0.5/sis-metadata-0.5.jar"/>
+        <pathelement location="D:/Dev/lib/org/opengis/geoapi/3.0.0/geoapi-3.0.0.jar"/>
+        <pathelement location="D:/Dev/lib/javax/measure/jsr-275/0.9.3/jsr-275-0.9.3.jar"/>
+        <pathelement location="D:/Dev/lib/com/thoughtworks/xstream/xstream/1.4.8/xstream-1.4.8.jar"/>
+        <pathelement location="D:/Dev/lib/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar"/>
+        <pathelement location="D:/Dev/lib/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar"/>
+        <pathelement location="D:/Dev/lib/xalan/xalan/2.7.2/xalan-2.7.2.jar"/>
+        <pathelement location="D:/Dev/lib/xalan/serializer/2.7.2/serializer-2.7.2.jar"/>
+        <pathelement location="D:/Dev/lib/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0.jar"/>
+        <pathelement location="D:/Dev/lib/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/xmlgraphics/xmlgraphics-commons/2.0.1/xmlgraphics-commons-2.0.1.jar"/>
+        <pathelement location="D:/Dev/lib/javax/mail/mail/1.5.0-b01/mail-1.5.0-b01.jar"/>
+        <pathelement location="D:/Dev/lib/javax/activation/activation/1.1/activation-1.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/com/jayway/jsonpath/json-path/2.2.0/json-path-2.2.0.jar"/>
+        <pathelement location="D:/Dev/lib/net/minidev/json-smart/2.2.1/json-smart-2.2.1.jar"/>
+        <pathelement location="D:/Dev/lib/org/jsoup/jsoup/1.8.3/jsoup-1.8.3.jar"/>
+        <pathelement location="D:/Dev/lib/org/jodd/jodd-core/3.6.7/jodd-core-3.6.7.jar"/>
+        <pathelement location="D:/Dev/lib/org/jodd/jodd-lagarto/3.6.7/jodd-lagarto-3.6.7.jar"/>
+        <pathelement location="D:/Dev/lib/org/jodd/jodd-log/3.6.7/jodd-log-3.6.7.jar"/>
+        <pathelement location="D:/Dev/lib/org/jodd/jodd-props/3.6.7/jodd-props-3.6.7.jar"/>
+        <pathelement location="D:/Dev/lib/org/mongodb/mongo-java-driver/2.11.3/mongo-java-driver-2.11.3.jar"/>
+        <pathelement location="D:/Dev/lib/com/helger/ph-css/4.1.1/ph-css-4.1.1.jar"/>
+        <pathelement location="D:/Dev/lib/com/helger/ph-commons/6.2.4/ph-commons-6.2.4.jar"/>
+        <pathelement location="D:/Dev/lib/com/google/code/findbugs/annotations/2.0.3/annotations-2.0.3.jar"/>
+        <pathelement location="D:/Dev/lib/com/fifesoft/rsyntaxtextarea/2.5.8/rsyntaxtextarea-2.5.8.jar"/>
+        <pathelement location="D:/Dev/lib/org/freemarker/freemarker/2.3.23/freemarker-2.3.23.jar"/>
+        <pathelement location="D:/Dev/lib/org/apache/logging/log4j/log4j-core/2.6.2/log4j-core-2.6.2.jar"/>
+    </path>
+    <path id="server.classpath">
+        <pathelement location="target/classes"/>
+        <pathelement location="target/test-classes"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ConsoleTester.classpath">
+        <path refid="server.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.ObjectPool.classpath">
+        <path refid="server.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.PolicyDeamon.classpath">
+        <path refid="server.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <path id="run.SingleReactorServer.classpath">
+        <path refid="server.classpath"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="target/classes"/>
+        <mkdir dir="target/test-classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
+            <fileset dir="src/main/java">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="target/test-classes">
+            <fileset dir="src/test/java">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="target/classes"/>
+        <delete dir="target/test-classes"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/main/java"/>
+            <classpath refid="server.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/test-classes" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/test/java"/>
+            <classpath refid="server.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ConsoleTester">
+        <java classname="com.pbit.client.ConsoleTester" failonerror="true" fork="yes">
+            <classpath refid="run.ConsoleTester.classpath"/>
+        </java>
+    </target>
+    <target name="ObjectPool">
+        <java classname="com.pbit.util.ObjectPool" failonerror="true" fork="yes">
+            <classpath refid="run.ObjectPool.classpath"/>
+        </java>
+    </target>
+    <target name="PolicyDeamon">
+        <java classname="com.pbit.PolicyDeamon" failonerror="true" fork="yes">
+            <jvmarg line="-DPS_LOG=D:\\Dev\\logs\\psrv -DPS_INS=PS1"/>
+            <arg line="C:\Users\Yong\git\pbit\server\config\log4j.xml"/>
+            <classpath refid="run.PolicyDeamon.classpath"/>
+        </java>
+    </target>
+    <target name="SingleReactorServer">
+        <java classname="lib.sol.server.service.SingleReactorServer" failonerror="true" fork="yes">
+            <classpath refid="run.SingleReactorServer.classpath"/>
+        </java>
+    </target>
+	<target name="nio_jmeter" depends="build" unless="jdk" description="Jemeter Sampler">
+		<jar jarfile="dist\nio_sampler.jar">
+			<fileset dir="target/test-classes">
+				<include name="**/*.class"/>
+			</fileset>
+			<fileset dir="target/classes">
+				<include name="**/*.class"/>
+			</fileset>
+		</jar>	
+	</target>          	
+</project>
