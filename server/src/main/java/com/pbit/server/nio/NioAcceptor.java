@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pbit.server.Acceptor;
-import com.pbit.server.session.ISession;
 
 public class NioAcceptor extends Acceptor {
 
