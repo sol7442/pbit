@@ -6,6 +6,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
@@ -15,16 +16,26 @@ import com.pbit.server.ISocketHandler;
 
 public class SlaveSelector extends Thread{
 
-	//private ReentrantLock selectorLock = new ReentrantLock();
 	private Selector _Selector;
+	private final int _Index;
+	
 	private Object selectorLock = new Object();
 	
 	protected Logger syslog  = LoggerFactory.getLogger("system");
 	protected Logger proclog = LoggerFactory.getLogger("process");
 	protected Logger errlog  = LoggerFactory.getLogger("error");
 	
-	public SlaveSelector() throws IOException{
+	
+	public SlaveSelector(int i) throws IOException{
+		_Index = i;
 		_Selector = Selector.open();
+		while(!_Selector.isOpen()){
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				errlog.error("{}",e);
+			}
+		}
 	}
 	public Selector getSelector(){
 		return _Selector;
@@ -32,12 +43,14 @@ public class SlaveSelector extends Thread{
 	
 	public void run(){
 		try {
-			synchronized (selectorLock) {
-				proclog.info("Start SlaveSelector Loop");
-			}
-			
             while (!Thread.interrupted()) {
-				_Selector.select(); // wait
+        		synchronized (selectorLock) {
+        			//proclog.info("Start SlaveSelector Loop {}",_index);
+				}
+				
+				int count = _Selector.select(); // wait
+				if(count == 0){continue;}
+				
                 Set<SelectionKey> selected = _Selector.selectedKeys();
                 Iterator<SelectionKey> it = selected.iterator();
                 while (it.hasNext()){
@@ -47,7 +60,7 @@ public class SlaveSelector extends Thread{
                 }
             }
 		} catch (IOException e) {
-			//errlog.error("{}",e);
+			errlog.error("{}",e);
 		}
 	}
 	private void dispatch(SelectionKey key) {
@@ -63,20 +76,23 @@ public class SlaveSelector extends Thread{
 		synchronized (selectorLock) {
 			SocketChannel _SocketChannel = channel;
 			_SocketChannel.configureBlocking(false);
-			
+
 			_Selector.wakeup();
 			
-			SelectionKey selectionKey = _SocketChannel.register(_Selector, SelectionKey.OP_READ);
-			selectionKey.attach(handler);
-			selectionKey.interestOps(SelectionKey.OP_READ);
+		proclog.debug("add Channel {} & register = befor " ,_Index);
+			SelectionKey selectionKey = _SocketChannel.register(_Selector, SelectionKey.OP_READ,handler);
+		proclog.debug("add Channel {} & register = after ",_Index);
+		
 			handler.setSelectionKey(selectionKey);
 			handler.setSelector(this);
 		}
 	}
 	public void interestOps(SelectionKey _SelectionKey, int op) {
 		synchronized (selectorLock) {
+			proclog.debug("interestOps {} ,{} ",_SelectionKey.toString(),_Index);
 			_SelectionKey.interestOps(op);
 			_Selector.wakeup();
+			
 		}
 	}
 }

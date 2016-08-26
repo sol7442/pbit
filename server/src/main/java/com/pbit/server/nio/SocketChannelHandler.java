@@ -35,7 +35,7 @@ public class SocketChannelHandler implements ISocketHandler {
 	}
 
 
-	synchronized public void write(){
+	 public void write(){
 		try {
 			ByteBufferPool bufferpool = ByteBufferPool.getInstance();
 			ByteBuffer[] buffers = _WriteQueue.poll();
@@ -67,7 +67,7 @@ public class SocketChannelHandler implements ISocketHandler {
 		}
 	}
 
-	synchronized public void read(){
+	 public void read(){
 		int numBytes = 0;
 		try {
 			ByteBufferPool bufferpool = ByteBufferPool.getInstance();
@@ -90,7 +90,7 @@ public class SocketChannelHandler implements ISocketHandler {
 		System.out.println("read byte : " + numBytes);
 	}
 	
-	public synchronized void wakeup(int flag){
+	public void wakeup(int flag){
 		proclog.debug("Opt : {}",flag);
 		_Selector.interestOps(_SelectionKey,flag);
 	}

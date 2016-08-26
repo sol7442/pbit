@@ -33,5 +33,8 @@ abstract public class Server implements Runnable
 	public void setBufferPool(ByteBufferPool pool){
 		_BufferPool = pool;
 	}
+	public ExecutorService getWorkPool(){
+		return _WorkPool;
+	}
 	
 }

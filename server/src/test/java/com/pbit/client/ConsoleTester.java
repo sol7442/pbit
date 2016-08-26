@@ -3,6 +3,7 @@ package com.pbit.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeoutException;
 
 import com.pbit.client.nio.NioClient;
 import com.pbit.client.socket.SocketClient;
@@ -64,8 +65,7 @@ public class ConsoleTester {
 	private static void request(Client client) {
 		
 		try {
-			client.request("consoltester..".getBytes());
-			byte[] res = client.response();
+			byte[] res = client.request("consoltester..".getBytes());
 			if(res != null){
 				System.out.println("response : " + new String(res));
 			}else{
@@ -73,6 +73,8 @@ public class ConsoleTester {
 			}
 			
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TimeoutException e) {
 			e.printStackTrace();
 		}
 	}
@@ -88,7 +90,7 @@ public class ConsoleTester {
 	private static Client connenct() {
 		Client client = new NioClient();
 		try {
-			client.open(target_addr,target_port);
+			client.connect(target_addr,target_port);
 			
 			while(!client.isConnected()){
 				Thread.sleep(500);

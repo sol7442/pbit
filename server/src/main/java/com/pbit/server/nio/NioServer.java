@@ -1,16 +1,9 @@
 package com.pbit.server.nio;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.pbit.server.Acceptor;
 import com.pbit.server.Server;
@@ -58,36 +51,6 @@ abstract public class NioServer extends Server implements IServiceListener {
 			errlog.error("{}",e);
 		}
 	}
-//	private void dispatch(SelectionKey key) {
-//        Runnable r = (Runnable) (key.attachment());
-//        if (r != null)
-//            r.run();
-//	}
-//	private class Acceptor implements Runnable {
-//		IServiceListener _Listener;
-//		public Acceptor(IServiceListener listener) {
-//			_Listener = listener;
-//		}
-//
-//		public void run() {
-//            try {
-//                SocketChannel channel = _ServerChannel.accept();
-//                if (channel != null){
-//                	ReadWriteHandler handler = new ReadWriteHandler(_Listener);
-//                	_Selectors[_CurSel++].addCannel(channel,handler);
-//                	
-//                    if(_CurSel == _SelectorSize){
-//                    	_CurSel = 0;
-//                    }
-//                    proclog.debug("new Connection Accept : ({}){}",_CurSel,channel.toString());
-//                }
-//            }
-//            catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//		}
-//	}
-	
 	public void requestArrived(SocketChannelHandler handler, ByteBuffer buffer) {
 		_WorkPool.execute(new Worker(handler,buffer));
 	}

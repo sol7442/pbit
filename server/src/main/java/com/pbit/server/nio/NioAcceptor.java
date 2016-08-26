@@ -39,7 +39,7 @@ public class NioAcceptor extends Acceptor {
 		
 		_Selectors = new SlaveSelector[_SelectorSize];	
 		for(int i=0;i<_SelectorSize;i++){
-			_Selectors[i] = new SlaveSelector();
+			_Selectors[i] = new SlaveSelector(i);
 			_Selectors[i].start();
 		}
 		syslog.info("Server Open : {},{}",_ServerChannel.toString(),_Selectors.length);
@@ -51,7 +51,6 @@ public class NioAcceptor extends Acceptor {
 		_AcceptSelector.select();// accept
 		Set<SelectionKey> selected = _AcceptSelector.selectedKeys();	
         count = selected.size();
-
         Iterator<SelectionKey> it = selected.iterator();
         while (it.hasNext()){        	
         	SelectionKey key = it.next();
@@ -60,15 +59,20 @@ public class NioAcceptor extends Acceptor {
         		SocketChannel channel = _ServerChannel.accept();
         		if (channel != null){
                 	SocketChannelHandler handler = new SocketChannelHandler(_Listener);
-                	_Selectors[_CurrentSelecotor++].addCannel(channel,handler);
+                	SlaveSelector selector = getSelector();
+                	selector.addCannel(channel,handler);
+                	
                 	_Listener.addNewSession(channel.socket());
-                    if(_CurrentSelecotor == _SelectorSize){
-                    	_CurrentSelecotor = 0;
-                    }
-                    proclog.debug("new Connection Accept : ({}){}",_CurrentSelecotor,channel.toString());
                 }
         	}
         }
 		return count;
+	}
+	
+	private SlaveSelector getSelector(){
+        if(_CurrentSelecotor == _SelectorSize){
+        	_CurrentSelecotor = 0;
+        }
+        return _Selectors[_CurrentSelecotor++];
 	}
 }

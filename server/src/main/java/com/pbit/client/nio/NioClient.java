@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.pbit.client.Client;
@@ -25,15 +26,15 @@ public class NioClient extends Client implements Runnable {
 	
 	private SocketChannel _socketChannel;
 	private Selector      _selector;
-	private SelectionKey  _selectionKey;
 	
 	private ByteBuffer readBuf = ByteBuffer.allocate(1024);
 	private ByteBuffer writeBuf = ByteBuffer.allocate(1024);
 	private final AtomicBoolean connected = new AtomicBoolean(false);
-	private BlockingQueue<byte[]> messages = new ArrayBlockingQueue<byte[]>(1024);
+	
+	private Future _futuer = new Future();
 	
 	@Override
-	public void open(String host, int port) throws IOException {
+	public void connect(String host, int port) throws IOException {
 		this.host = host;
 		this.port = port;
 		System.out.println("client open before-- ");
@@ -125,19 +126,16 @@ public class NioClient extends Client implements Runnable {
 	private void processRead(SelectionKey key) throws IOException {
 	    ReadableByteChannel ch = (ReadableByteChannel)key.channel();
 	    int bytesOp = 0, bytesTotal = 0;
+	    
+	    readBuf.clear();
 	    while (readBuf.hasRemaining() && (bytesOp = ch.read(readBuf)) > 0) bytesTotal += bytesOp;
-
+	   
 	    if (bytesTotal > 0) {
 	    	readBuf.flip();
 			
 	    	byte[] bytes = new byte[bytesTotal];
 			readBuf.get(bytes, 0, bytesTotal);
-			try {
-				messages.offer(bytes,1000,TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-	    	readBuf.compact();
+			_futuer.setResult(bytes);
 	    }
 	    else if (bytesOp == -1) {
 	    	System.out.println("peer closed write channel");
@@ -146,29 +144,42 @@ public class NioClient extends Client implements Runnable {
 	}
 
 	@Override
-	public void request(byte[] data) throws IOException {
+	public byte[] request(byte[] data) throws IOException, TimeoutException {
+		_futuer.clear();
 		if(!connected.get()){throw new IOException("not connected");}
-		//synchronized (writeBuf) {
-			writeBuf = ByteBuffer.wrap(data);
-			if (writeBuf.hasRemaining()) {
-				SelectionKey key = _socketChannel.keyFor(_selector);
-		        key.interestOps( SelectionKey.OP_WRITE);
-		        _selector.wakeup();
-			}
-			System.out.println("request : ("+writeBuf.remaining()+")" + new String(data));
-		//}
-	}
-
-	@Override
-	public byte[] response() throws IOException {
-		byte[] response = null;
-		try {
-			response = messages.poll(1000,TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		writeBuf = ByteBuffer.wrap(data);
+		if (writeBuf.hasRemaining()) {
+			SelectionKey key = _socketChannel.keyFor(_selector);
+			key.interestOps(SelectionKey.OP_WRITE);
+			_selector.wakeup();
 		}
-		return response;
+		System.out.println("request : (" + writeBuf.remaining() + ")" + new String(data));
+		return _futuer.getResult(_timeout);
 	}
-
-
+	private class Future{
+		private AtomicBoolean ready = new AtomicBoolean(false);
+		private byte[] data = null;
+		
+		synchronized public void setResult(byte[] data){
+			this.data = data;
+			ready.set(true);
+			notifyAll();
+		}
+		synchronized public byte[] getResult(long wait_time) throws TimeoutException{
+			while(!ready.get()){
+				try {
+					wait(5000);
+					if(!ready.get()){
+						throw new TimeoutException("Timeout Exeception : " + wait_time);
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			return this.data;
+		}
+		synchronized public void clear(){
+			ready.set(false);
+		}
+	}
 }

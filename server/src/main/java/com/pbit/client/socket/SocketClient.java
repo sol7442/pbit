@@ -1,8 +1,6 @@
 package com.pbit.client.socket;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import com.pbit.client.Client;
@@ -11,7 +9,7 @@ public class SocketClient extends Client{
 
 	private Socket socket = null;
 	@Override
-	public void open(String add, int port) throws IOException {
+	public void connect(String add, int port) throws IOException {
 		if(socket == null){
 			this.socket = new Socket(add,port);
 //			this.input  = socket.getInputStream();
@@ -26,15 +24,10 @@ public class SocketClient extends Client{
 		}
 	}
 	@Override
-	public void request(byte[] data) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public byte[] response() throws IOException {
-		// TODO Auto-generated method stub
+	public byte[] request(byte[] data) throws IOException {
 		return null;
 	}
+	
 	@Override
 	public boolean isConnected() {
 		// TODO Auto-generated method stub
